@@ -1,0 +1,148 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\Kecamatan;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+
+class KecamatanSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        $kecamatan = [
+            ['nama' => 'Agrabinta', 'kabupaten_id' => 1],
+            ['nama' => 'Leles', 'kabupaten_id' => 1],
+            ['nama' => 'Sindangbarang', 'kabupaten_id' => 1],
+            ['nama' => 'Cidaun', 'kabupaten_id' => 1],
+            ['nama' => 'Nariggul', 'kabupaten_id' => 1],
+            ['nama' => 'Cibinong', 'kabupaten_id' => 1],
+            ['nama' => 'Cikadu', 'kabupaten_id' => 1],
+            ['nama' => 'Tanggeung', 'kabupaten_id' => 1],
+            ['nama' => 'PasirKuda', 'kabupaten_id' => 1],
+            ['nama' => 'Kadupandak', 'kabupaten_id' => 1],
+            ['nama' => 'Cijati', 'kabupaten_id' => 1],
+            ['nama' => 'Takokak', 'kabupaten_id' => 1],
+            ['nama' => 'Sukanagara', 'kabupaten_id' => 1],
+            ['nama' => 'Pagelaran', 'kabupaten_id' => 1],
+            ['nama' => 'Cempaka', 'kabupaten_id' => 1],
+            ['nama' => 'Cempaka Mulya', 'kabupaten_id' => 1],
+            ['nama' => 'Cibeber', 'kabupaten_id' => 1],
+            ['nama' => 'Warungkondang', 'kabupaten_id' => 1],
+            ['nama' => 'Gekbrong', 'kabupaten_id' => 1],
+            ['nama' => 'Cilaku', 'kabupaten_id' => 1],
+            ['nama' => 'Sukaluyu', 'kabupaten_id' => 1],
+            ['nama' => 'Bojongpicung', 'kabupaten_id' => 1],
+            ['nama' => 'Haurwangi', 'kabupaten_id' => 1],
+            ['nama' => 'Ciranjang', 'kabupaten_id' => 1],
+            ['nama' => 'Mande', 'kabupaten_id' => 1],
+            ['nama' => 'Karangtengah', 'kabupaten_id' => 1],
+            ['nama' => 'Cianjur', 'kabupaten_id' => 1],
+            ['nama' => 'Cugenang', 'kabupaten_id' => 1],
+            ['nama' => 'Pacet', 'kabupaten_id' => 1],
+            ['nama' => 'Cipanas', 'kabupaten_id' => 1],
+            ['nama' => 'Sukaresmi', 'kabupaten_id' => 1],
+            ['nama' => 'Cikalongkulon', 'kabupaten_id' => 1],
+
+            //sukabumi
+            ['nama' => 'Ciemas', 'kabupaten_id' => 2],
+            ['nama' => 'Ciracap', 'kabupaten_id' => 2],
+            ['nama' => 'Waluran', 'kabupaten_id' => 2],
+            ['nama' => 'Surade', 'kabupaten_id' => 2],
+            ['nama' => 'Cibitung', 'kabupaten_id' => 2],
+            ['nama' => 'Jampang Kulon', 'kabupaten_id' => 2],
+            ['nama' => 'Cimanggu', 'kabupaten_id' => 2],
+            ['nama' => 'Kali Bunder', 'kabupaten_id' => 2],
+            ['nama' => 'Tegal Belued', 'kabupaten_id' => 2],
+            ['nama' => 'Cidolog', 'kabupaten_id' => 2],
+            ['nama' => 'Sagaranten', 'kabupaten_id' => 2],
+            ['nama' => 'Cidadap', 'kabupaten_id' => 2],
+            ['nama' => 'Curugkembar', 'kabupaten_id' => 2],
+            ['nama' => 'Pabuaran', 'kabupaten_id' => 2],
+            ['nama' => 'Lengkong', 'kabupaten_id' => 2],
+            ['nama' => 'Pelabuhanratu', 'kabupaten_id' => 2],
+            ['nama' => 'Simpenan', 'kabupaten_id' => 2],
+            ['nama' => 'Warung Kiara', 'kabupaten_id' => 2],
+            ['nama' => 'Bantargadung', 'kabupaten_id' => 2],
+            ['nama' => 'Jampang Tengah', 'kabupaten_id' => 2],
+            ['nama' => 'Purabaya', 'kabupaten_id' => 2],
+            ['nama' => 'Cikembar', 'kabupaten_id' => 2],
+            ['nama' => 'Nyalindung', 'kabupaten_id' => 2],
+            ['nama' => 'Geger Bitung', 'kabupaten_id' => 2],
+            ['nama' => 'Sukaraja', 'kabupaten_id' => 2],
+            ['nama' => 'Kebonpedes', 'kabupaten_id' => 2],
+            ['nama' => 'Tegal Belued', 'kabupaten_id' => 2],
+            ['nama' => 'Cireunghas', 'kabupaten_id' => 2],
+            ['nama' => 'Sukalarang', 'kabupaten_id' => 2],
+            ['nama' => 'Sukabumi', 'kabupaten_id' => 2],
+            ['nama' => 'Kadudampit', 'kabupaten_id' => 2],
+            ['nama' => 'Cisaat', 'kabupaten_id' => 2],
+            ['nama' => 'Gunungguruh', 'kabupaten_id' => 2],
+            ['nama' => 'Cibadak', 'kabupaten_id' => 2],
+            ['nama' => 'Cicantayan', 'kabupaten_id' => 2],
+            ['nama' => 'Caringin', 'kabupaten_id' => 2],
+            ['nama' => 'Nagrak', 'kabupaten_id' => 2],
+            ['nama' => 'Ciambar', 'kabupaten_id' => 2],
+            ['nama' => 'Cicurug', 'kabupaten_id' => 2],
+            ['nama' => 'Cidahu', 'kabupaten_id' => 2],
+            ['nama' => 'Parakan Salakn', 'kabupaten_id' => 2],
+            ['nama' => 'Parung Kuda', 'kabupaten_id' => 2],
+            ['nama' => 'Bojong Genteng', 'kabupaten_id' => 2],
+            ['nama' => 'Kelapa Nunggal', 'kabupaten_id' => 2],
+            ['nama' => 'Cikidang', 'kabupaten_id' => 2],
+            ['nama' => 'Cisolok', 'kabupaten_id' => 2],
+            ['nama' => 'Cikakak', 'kabupaten_id' => 2],
+            ['nama' => 'Kabandungan', 'kabupaten_id' => 2],
+
+            //Bogor
+            ['nama' => 'Nanggung', 'kabupaten_id' => 3],
+            ['nama' => 'Leuwiliang', 'kabupaten_id' => 3],
+            ['nama' => 'Leuwisadeng', 'kabupaten_id' => 3],
+            ['nama' => 'Pamijahan', 'kabupaten_id' => 3],
+            ['nama' => 'Cibungbulang', 'kabupaten_id' => 3],
+            ['nama' => 'Ciampea', 'kabupaten_id' => 3],
+            ['nama' => 'Tenjolaya', 'kabupaten_id' => 3],
+            ['nama' => 'Dramaga', 'kabupaten_id' => 3],
+            ['nama' => 'Ciomas', 'kabupaten_id' => 3],
+            ['nama' => 'Tamansari', 'kabupaten_id' => 3],
+            ['nama' => 'Cijeruk', 'kabupaten_id' => 3],
+            ['nama' => 'Cigombong', 'kabupaten_id' => 3],
+            ['nama' => 'Caringin', 'kabupaten_id' => 3],
+            ['nama' => 'Ciawi', 'kabupaten_id' => 3],
+            ['nama' => 'Cisarua', 'kabupaten_id' => 3],
+            ['nama' => 'Megamendung', 'kabupaten_id' => 3],
+            ['nama' => 'Sukaraja', 'kabupaten_id' => 3],
+            ['nama' => 'Babakan Madang', 'kabupaten_id' => 3],
+            ['nama' => 'Sukamakmur', 'kabupaten_id' => 3],
+            ['nama' => 'Cariu', 'kabupaten_id' => 3],
+            ['nama' => 'Tanjungsari', 'kabupaten_id' => 3],
+            ['nama' => 'Jonggol', 'kabupaten_id' => 3],
+            ['nama' => 'Cileungsi', 'kabupaten_id' => 3],
+            ['nama' => 'Kelapa Nunggal', 'kabupaten_id' => 3],
+            ['nama' => 'Gunung Putri', 'kabupaten_id' => 3],
+            ['nama' => 'Citeureup', 'kabupaten_id' => 3],
+            ['nama' => 'Cibinong', 'kabupaten_id' => 3],
+            ['nama' => 'Bojong Gede', 'kabupaten_id' => 3],
+            ['nama' => 'Tajur Halang', 'kabupaten_id' => 3],
+            ['nama' => 'Kemang', 'kabupaten_id' => 3],
+            ['nama' => 'Ranca Bungur', 'kabupaten_id' => 3],
+            ['nama' => 'Parung', 'kabupaten_id' => 3],
+            ['nama' => 'Ciseeng', 'kabupaten_id' => 3],
+            ['nama' => 'Gunung Sindur', 'kabupaten_id' => 3],
+            ['nama' => 'Rumpin', 'kabupaten_id' => 3],
+            ['nama' => 'Cigudeg', 'kabupaten_id' => 3],
+            ['nama' => 'Sukajaya', 'kabupaten_id' => 3],
+            ['nama' => 'Jasinga', 'kabupaten_id' => 3],
+            ['nama' => 'Tenjo', 'kabupaten_id' => 3],
+            ['nama' => 'Parung Panjang', 'kabupaten_id' => 3],
+        ];
+
+        // Loop through the data and insert into the database
+        foreach ($kecamatan as $data) {
+            Kecamatan::create($data);
+        }
+    }
+}
