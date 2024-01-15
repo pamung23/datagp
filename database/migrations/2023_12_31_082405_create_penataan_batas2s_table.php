@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('penataan_batas2s', function (Blueprint $table) {
             $table->id();
             $table->integer('no_register_kawasan')->default('100242015');
-            $table->integer('p_batas');
+            $table->string('p_batas');
             $table->string('tahun');
-            $table->integer('panjang');
-            $table->integer('jmlh_batas');
-            $table->integer('nomor');
+            $table->string('panjang');
+            $table->string('jmlh_batas');
+            $table->string('nomor');
             $table->date('tanggal');
             $table->Integer('baik');
             $table->Integer('rusak');

@@ -19,41 +19,74 @@ class PeralatanTransportasiController extends Controller
     public function index(Request $request)
     {
         $semester = $request->input('semester', 1);
-        $year = $request->input('year'); // Get the selected year from the request
+        $year = $request->input('year');
+        $modelsToQuery = [];
 
-        $model = $this->modelMapping[$semester] ?? peralatan_transportasi1::class;
+        // Ambil level pengguna saat ini
+        $userLevel = auth()->user()->level;
 
-        // Fetch data based on the selected year (if provided)
-        $query = $model::query();
+        // Inisialisasi array level yang diizinkan mengakses semua triwulan
+        $levelsAllowedForAllsemester = ['Admin', 'Balai'];
 
-        if ($year) {
-            $query->whereYear('created_at', $year);
+        if (in_array($userLevel, $levelsAllowedForAllsemester)) {
+            // Jika level pengguna adalah 'Admin' atau 'Balai', perbolehkan akses ke semua triwulan
+            foreach ($this->modelMapping as $model) {
+                $modelsToQuery[] = new $model;
+            }
+        } elseif (in_array($userLevel, ['Wilayah Cianjur', 'Wilayah Sukabumi', 'Wilayah Bogor'])) {
+            // Jika level pengguna adalah 'Wilayah Cianjur', 'Wilayah Sukabumi', atau 'Wilayah Bogor',
+            // batasi akses hanya ke triwulan yang dipilih dan resort yang sesuai
+            $model = $this->modelMapping[$semester] ?? peralatan_transportasi1::class;
+            $modelsToQuery[] = new $model;
         }
 
-        $peralatan_transportasi = $query->get();
+        $peralatan_transportasi = collect();
 
-        // Fetch the unique years from the selected model
-        $uniqueYears = $model::selectRaw('YEAR(created_at) as year')
-            ->distinct()
-            ->orderBy('year', 'desc')
-            ->pluck('year');
+        foreach ($modelsToQuery as $model) {
+            $query = $model::query()->with('user.resort');
 
+            if ($year) {
+                $query->whereYear('created_at', $year);
+            }
+
+            // Jika level pengguna adalah 'Wilayah Cianjur', 'Wilayah Sukabumi', atau 'Wilayah Bogor',
+            // tambahkan kondisi untuk membatasi berdasarkan resort
+            if (in_array($userLevel, ['Wilayah Cianjur', 'Wilayah Sukabumi', 'Wilayah Bogor'])) {
+                $query->whereHas('user.resort', function ($subquery) use ($userLevel) {
+                    $subquery->where('nama', auth()->user()->resort->nama);
+                });
+            }
+
+            $peralatan_transportasi = $peralatan_transportasi->merge($query->get());
+        }
+
+        $uniqueYears = collect();
+
+        foreach ($modelsToQuery as $model) {
+            $years = $model::selectRaw('YEAR(created_at) as year')
+                ->distinct()
+                ->orderBy('year', 'desc')
+                ->pluck('year');
+
+            $uniqueYears = $uniqueYears->merge($years);
+        }
         return view('admin.peralatantransportasi.index', compact('peralatan_transportasi', 'semester', 'uniqueYears', 'year'));
     }
 
     public function exportToExcel(Request $request)
     {
-        $semester = $request->query('semester', null);
-        $year = $request->query('year', null);
+        $semester = $request->get('semester');
+        $year = $request->get('year');
 
-        if ($year && $semester) {
-            return Excel::download(new PeralatanTransportasiExport($semester, $year), 'peralatantransportasi_semester_' . $semester . '_tahun_' . $year . '.xlsx');
-        } elseif ($semester) {
-            return Excel::download(new PeralatanTransportasiExport($semester, null), 'peralatantransportasi_semester_' . $semester . '.xlsx');
+        if ($semester === 'all') {
+            $fileName = 'Peralatan Transportasi Pengendalian Kebakaran Hutan ALL semester ' . $year . '.xlsx';
+        } elseif (in_array($semester, [1, 2])) {
+            $fileName = 'Peralatan Transportasi Pengendalian Kebakaran Hutan semester ' . $semester . ' ' . $year . '.xlsx';
         } else {
-            // Redirect to a default page if neither year nor semester is selected
-            return redirect()->route('peralatantransportasi.index'); // Replace with your desired default route
+            return redirect()->back()->with('error', 'Invalid Semester selected for export.');
         }
+
+        return (new PeralatanTransportasiExport($semester, $year))->download($fileName);
     }
 
 

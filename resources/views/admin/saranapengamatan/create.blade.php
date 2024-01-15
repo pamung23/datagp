@@ -25,7 +25,8 @@
             <div class="statbox widget box box-shadow">
                 <div class="widget-header">
                     <div class="row">
-                        <div class="col-xl-12 col-md-12 col-sm-12 col-12">
+                        <div class="col-xl-12 col-md-12 col-sm-12 col-12 " style="margin-left: 12px;">
+                            <br>
                             <h3>Semester {{ $semester }}</h3>
                             <h4>Sarana Pengamanan Hutan</h4>
                         </div>

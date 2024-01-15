@@ -2,9 +2,10 @@
 
 namespace App\Exports;
 
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use App\Models\peralatan_transportasi1;
 use App\Models\peralatan_transportasi2;
-use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -18,6 +19,7 @@ class PeralatanTransportasiExport implements FromCollection, WithHeadings, WithS
 
     protected $semester;
     protected $year;
+    private $currentIndex = 0;
 
     public function __construct($semester, $year)
     {
@@ -40,37 +42,73 @@ class PeralatanTransportasiExport implements FromCollection, WithHeadings, WithS
      */
     public function collection()
     {
-        // Ambil nama kelas model yang sesuai berdasarkan semester
-        $modelClass = $this->getModelForSemester($this->semester);
+        $user = Auth::user();
 
-        if (!$modelClass) {
-            return collect(); // Return empty collection jika model tidak ditemukan
+        if ($this->semester === 'all') {
+            $data = collect();
+
+            for ($i = 1; $i <= 4; $i++) {
+                $modelClass = $this->getModelForSemester($i);
+
+                if (!$modelClass) {
+                    continue;
+                }
+
+                $model = new $modelClass();
+
+                $query = $model->query();
+
+                if ($this->year) {
+                    $query->whereYear('created_at', $this->year);
+                }
+
+                // Filter berdasarkan resort pengguna untuk level 'Wilayah'
+                if (in_array($user->level, ['Wilayah Cianjur', 'Wilayah Sukabumi', 'Wilayah Bogor'])) {
+                    $query->whereHas('user.resort', function ($subquery) use ($user) {
+                        $subquery->where('id', $user->resort_id);
+                    });
+                }
+
+                $semesterData = $query->get();
+
+                $semesterData->each(function ($item) use ($i) {
+                    $item->semester = $i;
+                });
+
+                $data = $data->merge($semesterData);
+            }
+
+            return $data;
+        } else {
+            $modelClass = $this->getModelForSemester($this->semester);
+
+            if (!$modelClass) {
+                return collect();
+            }
+
+            $model = new $modelClass();
+
+            $query = $model->query();
+
+            if ($this->year) {
+                $query->whereYear('created_at', $this->year);
+            }
+
+            // Filter berdasarkan resort pengguna untuk level 'Wilayah'
+            if (in_array($user->level, ['Wilayah Cianjur', 'Wilayah Sukabumi', 'Wilayah Bogor'])) {
+                $query->whereHas('user.resort', function ($subquery) use ($user) {
+                    $subquery->where('id', $user->resort_id);
+                });
+            }
+
+            $semesterData = $query->get();
+
+            $semesterData->each(function ($item) {
+                $item->semester = $this->semester;
+            });
+
+            return $semesterData;
         }
-
-        // Buat instance model berdasarkan kelas
-        $model = new $modelClass();
-
-        // Query dan ambil data sesuai dengan model dan tahun yang dipilih
-        $query = $model->query();
-
-        if ($this->year) {
-            $query->whereYear('created_at', $this->year);
-        }
-
-        $data = $query->get();
-
-        // Tambahkan nomor urut pada setiap baris
-        $data->each(function ($item, $key) {
-            $item->nomor_urut = $key + 1;
-        });
-
-        // Ubah data menjadi koleksi
-        $collection = collect($data);
-
-        // Debugging: Log data to check if it's retrieved correctly
-        Log::info('Data retrieved:', $collection->toArray());
-
-        return $collection;
     }
 
     public function headings(): array
@@ -172,9 +210,10 @@ class PeralatanTransportasiExport implements FromCollection, WithHeadings, WithS
 
     public function map($row): array
     {
+        $this->currentIndex++;
         return [
             '',
-            $row->nomor_urut,
+            $this->currentIndex,
             $row->satker_id,
             $row->daops,
             $row->baik1,

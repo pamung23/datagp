@@ -66,7 +66,7 @@
                                     <label for="password">Password</label>
                                     <div class="input-group">
                                         <input type="password" class="form-control" id="password" name="password"
-                                            value="{{ $user->email }}" required>
+                                            value="">
                                         <div class="input-group-append">
                                             <button type="button" id="togglePassword" class="btn btn-outline-secondary">
                                                 <i class="fa fa-eye-slash"></i>
@@ -110,7 +110,15 @@
                                         @endforeach
                                     </select>
                                 </div>
-
+                                <div class="form-group">
+                                    <label for="blokir">Blokir</label>
+                                    <select class="form-control" id="blokir" name="blokir" required>
+                                        <option value="Y" {{ $user->blokir === 'Y' ?
+                                            'selected' : '' }}>Yes</option>
+                                        <option value="N" {{ $user->blokir === 'N' ?
+                                            'selected' : '' }}>No</option>
+                                    </select>
+                                </div>
                                 <button type="submit" class="btn btn-primary">Simpan</button>
                             </form>
                         </div>

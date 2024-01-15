@@ -81,7 +81,13 @@
                                         <option value="Wilayah Bogor">Wilayah Bogor</option>
                                     </select>
                                 </div>
-
+                                <div class="form-group">
+                                    <label for="blokir">Blokir</label>
+                                    <select class="form-control" id="blokir" name="blokir" required>
+                                        <option value="Y">Yes</option>
+                                        <option value="N">No</option>
+                                    </select>
+                                </div>
                                 <div class="form-group resort-container">
                                     <label for="resort_id">Resort</label>
                                     <select class="form-control" id="resort_id" name="resort_id">

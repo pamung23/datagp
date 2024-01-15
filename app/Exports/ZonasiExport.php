@@ -5,6 +5,7 @@ namespace App\Exports;
 use App\Models\Zonasi1;
 use App\Models\Zonasi2;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -18,7 +19,7 @@ class ZonasiExport implements FromCollection, WithHeadings, WithStyles, WithMapp
 
     protected $semester;
     protected $year;
-
+    private $currentIndex = 0;
     public function __construct($semester, $year)
     {
         $this->semester = $semester;
@@ -36,40 +37,101 @@ class ZonasiExport implements FromCollection, WithHeadings, WithStyles, WithMapp
         return $modelMapping[$semester] ?? null;
     }
 
+    protected function formatTanggal($date)
+    {
+        // Array nama-nama bulan dalam bahasa Indonesia
+        $bulan = [
+            '01' => 'Januari',
+            '02' => 'Februari',
+            '03' => 'Maret',
+            '04' => 'April',
+            '05' => 'Mei',
+            '06' => 'Juni',
+            '07' => 'Juli',
+            '08' => 'Agustus',
+            '09' => 'September',
+            '10' => 'Oktober',
+            '11' => 'November',
+            '12' => 'Desember'
+        ];
+        // Pisahkan tanggal, bulan, dan tahun
+        $parts = explode('-', $date);
+        $tahun = $parts[0];
+        $bulanIndonesia = $bulan[$parts[1]];
+        $tanggal = $parts[2];
 
+        // Gabungkan dalam format Indonesia
+        return $tanggal . ' ' . $bulanIndonesia . ' ' . $tahun;
+    }
     public function collection()
     {
-        // Ambil nama kelas model yang sesuai berdasarkan semester
-        $modelClass = $this->getModelForsemester($this->semester);
+        $user = Auth::user();
 
-        if (!$modelClass) {
-            return collect(); // Return empty collection jika model tidak ditemukan
+        if ($this->semester === 'all') {
+            $data = collect();
+
+            for ($i = 1; $i <= 4; $i++) {
+                $modelClass = $this->getModelForSemester($i);
+
+                if (!$modelClass) {
+                    continue;
+                }
+
+                $model = new $modelClass();
+
+                $query = $model->query();
+
+                if ($this->year) {
+                    $query->whereYear('created_at', $this->year);
+                }
+
+                // Filter berdasarkan resort pengguna untuk level 'Wilayah'
+                if (in_array($user->level, ['Wilayah Cianjur', 'Wilayah Sukabumi', 'Wilayah Bogor'])) {
+                    $query->whereHas('user.resort', function ($subquery) use ($user) {
+                        $subquery->where('id', $user->resort_id);
+                    });
+                }
+
+                $semesterData = $query->get();
+
+                $semesterData->each(function ($item) use ($i) {
+                    $item->semester = $i;
+                });
+
+                $data = $data->merge($semesterData);
+            }
+
+            return $data;
+        } else {
+            $modelClass = $this->getModelForSemester($this->semester);
+
+            if (!$modelClass) {
+                return collect();
+            }
+
+            $model = new $modelClass();
+
+            $query = $model->query();
+
+            if ($this->year) {
+                $query->whereYear('created_at', $this->year);
+            }
+
+            // Filter berdasarkan resort pengguna untuk level 'Wilayah'
+            if (in_array($user->level, ['Wilayah Cianjur', 'Wilayah Sukabumi', 'Wilayah Bogor'])) {
+                $query->whereHas('user.resort', function ($subquery) use ($user) {
+                    $subquery->where('id', $user->resort_id);
+                });
+            }
+
+            $semesterData = $query->get();
+
+            $semesterData->each(function ($item) {
+                $item->semester = $this->semester;
+            });
+
+            return $semesterData;
         }
-
-        // Buat instance model berdasarkan kelas
-        $model = new $modelClass();
-
-        // Query dan ambil data sesuai dengan model dan tahun yang dipilih
-        $query = $model->query();
-
-        if ($this->year) {
-            $query->whereYear('created_at', $this->year);
-        }
-
-        $data = $query->get();
-
-        // Tambahkan nomor urut pada setiap baris
-        $data->each(function ($item, $key) {
-            $item->nomor_urut = $key + 1;
-        });
-
-        // Ubah data menjadi koleksi
-        $collection = collect($data);
-
-        // Debugging: Log data to check if it's retrieved correctly
-        Log::info('Data retrieved:', $collection->toArray());
-
-        return $collection;
     }
 
     public function headings(): array
@@ -131,20 +193,14 @@ class ZonasiExport implements FromCollection, WithHeadings, WithStyles, WithMapp
 
     public function map($row): array
     {
-        // Konversi string tanggal menjadi objek DateTime
-        $date = \DateTime::createFromFormat('Y-m-d', $row->tanggal);
-
-        // Jika format tanggal tidak sesuai, gunakan:
-        // $date = Date::excelToDateTimeObject($row->tanggal);
-
-        // Ubah format menjadi nama bulan dengan tahun
-        $formattedDate = $date->format('d F Y');
+        $tanggal = $this->formatTanggal($row->tanggal);
+        $this->currentIndex++;
         return [
             '',
-            $row->nomor_urut,
+            $this->currentIndex,
             $row->no_register_kawasan,
             $row->nomor,
-            $formattedDate,
+            $tanggal,
             $row->inti != 0 ? number_format($row->inti, 2, ',', '.') : '0',
             $row->rimba != 0 ? number_format($row->rimba, 2, ',', '.') : '0',
             $row->pemanfaatan != 0 ? number_format($row->pemanfaatan, 2, ',', '.') : '0',

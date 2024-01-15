@@ -40,6 +40,7 @@ class UserController extends Controller
             'hp' => 'required|string|unique:users',
             'password' => 'required',
             'level' => 'required',
+            'blokir' => 'nullable',
             'resort_id' => 'nullable|exists:resorts,id',
         ]);
 
@@ -71,6 +72,7 @@ class UserController extends Controller
             'hp' => 'required|numeric|unique:users,hp,' . $id,
             'password' => 'required',
             'level' => 'required',
+            'blokir' => 'nullable',
             'resort_id' => 'nullable|exists:resorts,id',
         ]);
         $data['password'] = Hash::make($data['password']);

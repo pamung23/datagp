@@ -11,12 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ekosistem3s', function (Blueprint $table) {
+        Schema::create('rekontruksi_batas2s', function (Blueprint $table) {
             $table->id();
             $table->integer('no_register_kawasan')->default('100242015');
-            $table->json('tipe'); // JSON data type
-            $table->json('luas'); // JSON data type
+            $table->string('p_batas');
+            $table->string('tahun');
+            $table->string('panjang');
+            $table->string('jmlh_batas');
+            $table->string('nomor');
+            $table->date('tanggal');
             $table->text('keterangan')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
             $table->timestamps();
         });
     }
@@ -26,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ekosistem3s');
+        Schema::dropIfExists('rekontruksi_batas2s');
     }
 };

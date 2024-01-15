@@ -11,17 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('penanganan_jenis2s', function (Blueprint $table) {
+        Schema::create('penanganan_jenis1s', function (Blueprint $table) {
             $table->id();
             $table->integer('no_register_kawasan')->default('100242015');
             $table->string('ilmiah')->nullable();
-            $table->decimal('luas');
+            $table->string('luas');
             $table->decimal('latitude', 10, 6);
             $table->decimal('longitude', 10, 6);
             $table->string('penanganan');
             $table->string('rencana');
             $table->string('kemitraan');
             $table->text('keterangan')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
             $table->timestamps();
         });
     }
@@ -31,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('penanganan_jenis2s');
+        Schema::dropIfExists('penanganan_jenis1s');
     }
 };

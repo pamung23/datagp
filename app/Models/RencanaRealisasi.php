@@ -16,5 +16,6 @@ class RencanaRealisasi extends Model
         'target_ha',
         'luas_ha',
         'persentase_keberhasilan',
+        'keterangan',
     ];
 }

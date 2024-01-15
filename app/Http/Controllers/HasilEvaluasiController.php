@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\HasilEvaluasiExport;
+use Illuminate\Support\Carbon;
 use App\Models\hasil_evaluasi1;
 use App\Models\hasil_evaluasi2;
+use App\Exports\HasilEvaluasiExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class HasilEvaluasiController extends Controller
 {
@@ -19,24 +20,84 @@ class HasilEvaluasiController extends Controller
     public function index(Request $request)
     {
         $semester = $request->input('semester', 1);
-        $year = $request->input('year'); // Dapatkan tahun yang dipilih dari permintaan
+        $year = $request->input('year');
+        $modelsToQuery = [];
 
-        $model = $this->modelMapping[$semester] ?? hasil_evaluasi1::class;
+        // Ambil level pengguna saat ini
+        $userLevel = auth()->user()->level;
 
-        // Ambil data berdasarkan tahun yang dipilih (jika disediakan)
-        $query = $model::query();
+        // Inisialisasi array level yang diizinkan mengakses semua triwulan
+        $levelsAllowedForAllsemester = ['Admin', 'Balai'];
 
-        if ($year) {
-            $query->whereYear('created_at', $year);
+        if (in_array($userLevel, $levelsAllowedForAllsemester)) {
+            // Jika level pengguna adalah 'Admin' atau 'Balai', perbolehkan akses ke semua triwulan
+            foreach ($this->modelMapping as $model) {
+                $modelsToQuery[] = new $model;
+            }
+        } elseif (in_array($userLevel, ['Wilayah Cianjur', 'Wilayah Sukabumi', 'Wilayah Bogor'])) {
+            // Jika level pengguna adalah 'Wilayah Cianjur', 'Wilayah Sukabumi', atau 'Wilayah Bogor',
+            // batasi akses hanya ke triwulan yang dipilih dan resort yang sesuai
+            $model = $this->modelMapping[$semester] ?? hasil_evaluasi1::class;
+            $modelsToQuery[] = new $model;
         }
 
-        $hasilevaluasi = $query->get();
+        $hasilevaluasi = collect();
 
-        // Ambil tahun unik dari model yang dipilih
-        $uniqueYears = $model::selectRaw('YEAR(created_at) as year')
-            ->distinct()
-            ->orderBy('year', 'desc')
-            ->pluck('year');
+        foreach ($modelsToQuery as $model) {
+            $query = $model::query()->with('user.resort');
+
+            if ($year) {
+                $query->whereYear('created_at', $year);
+            }
+
+            // Jika level pengguna adalah 'Wilayah Cianjur', 'Wilayah Sukabumi', atau 'Wilayah Bogor',
+            // tambahkan kondisi untuk membatasi berdasarkan resort
+            if (in_array($userLevel, ['Wilayah Cianjur', 'Wilayah Sukabumi', 'Wilayah Bogor'])) {
+                $query->whereHas('user.resort', function ($subquery) use ($userLevel) {
+                    $subquery->where('nama', auth()->user()->resort->nama);
+                });
+            }
+
+            $hasilevaluasi = $hasilevaluasi->merge($query->get());
+        }
+
+        $uniqueYears = collect();
+
+        foreach ($modelsToQuery as $model) {
+            $years = $model::selectRaw('YEAR(created_at) as year')
+                ->distinct()
+                ->orderBy('year', 'desc')
+                ->pluck('year');
+
+            $uniqueYears = $uniqueYears->merge($years);
+        }
+
+        // Filter out duplicates and sort the unique years
+        $uniqueYears = $uniqueYears->unique()->sort()->reverse();
+
+        function getMonthInBahasa($englishMonth)
+        {
+            $months = [
+                'January' => 'Januari',
+                'February' => 'Februari',
+                'March' => 'Maret',
+                'April' => 'April',
+                'May' => 'Mei',
+                'June' => 'Juni',
+                'July' => 'Juli',
+                'August' => 'Agustus',
+                'September' => 'September',
+                'October' => 'Oktober',
+                'November' => 'November',
+                'December' => 'Desember',
+            ];
+
+            return $months[$englishMonth];
+        }
+        $hasilevaluasi = $hasilevaluasi->map(function ($item) {
+            $item->tanggal = $item->tanggal ? Carbon::parse($item->tanggal)->translatedFormat('d F Y') : '';
+            return $item;
+        });
 
         return view('admin.hasilevaluasi.index', compact('hasilevaluasi', 'semester', 'uniqueYears', 'year'));
     }

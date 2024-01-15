@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('zonasi1s', function (Blueprint $table) {
+        Schema::create('zonasi2s', function (Blueprint $table) {
             $table->id();
             $table->integer('no_register_kawasan')->default('100242015');
             $table->string('nomor');
@@ -29,6 +29,8 @@ return new class extends Migration
             $table->decimal('lainnya', 10, 2);
             $table->decimal('total', 10, 2)->nullable();
             $table->text('keterangan')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
             $table->timestamps();
         });
     }
@@ -38,6 +40,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('zonasi1s');
+        Schema::dropIfExists('zonasi2s');
     }
 };

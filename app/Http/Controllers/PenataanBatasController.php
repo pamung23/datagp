@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\PenataanBatasExport;
+use Illuminate\Support\Carbon;
 use App\Models\penataan_batas1;
 use App\Models\penataan_batas2;
+use App\Exports\PenataanBatasExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PenataanBatasController extends Controller
 {
@@ -71,6 +72,32 @@ class PenataanBatasController extends Controller
             $uniqueYears = $uniqueYears->merge($years);
         }
 
+        // Filter out duplicates and sort the unique years
+        $uniqueYears = $uniqueYears->unique()->sort()->reverse();
+
+        function getMonthInBahasa($englishMonth)
+        {
+            $months = [
+                'January' => 'Januari',
+                'February' => 'Februari',
+                'March' => 'Maret',
+                'April' => 'April',
+                'May' => 'Mei',
+                'June' => 'Juni',
+                'July' => 'Juli',
+                'August' => 'Agustus',
+                'September' => 'September',
+                'October' => 'Oktober',
+                'November' => 'November',
+                'December' => 'Desember',
+            ];
+
+            return $months[$englishMonth];
+        }
+        $penataanbatas = $penataanbatas->map(function ($item) {
+            $item->tanggal = $item->tanggal ? Carbon::parse($item->tanggal)->translatedFormat('d F Y') : '';
+            return $item;
+        });
         return view('admin.penataanbatas.index', compact('penataanbatas', 'semester', 'uniqueYears', 'year'));
     }
 
@@ -82,7 +109,7 @@ class PenataanBatasController extends Controller
 
         if ($semester === 'all') {
             $fileName = 'Penataan Batas Kawasan Konservasi ALL semester ' . $year . '.xlsx';
-        } elseif (in_array($semester, [1, 2, 3, 4])) {
+        } elseif (in_array($semester, [1, 2])) {
             $fileName = 'Penataan Batas Kawasan Konservasi semester ' . $semester . ' ' . $year . '.xlsx';
         } else {
             return redirect()->back()->with('error', 'Invalid Semester selected for export.');
@@ -93,13 +120,16 @@ class PenataanBatasController extends Controller
 
     public function create($semester)
     {
+        $currentYear = date('Y');
+        $years = range($currentYear - 5, $currentYear);
+        $years = array_reverse($years);
         $model = $this->modelMapping[$semester] ?? null;
         if (!$model) {
             return redirect()->route('penataanbatas.index.semester', ['semester' => $semester])->with('error', 'semester tidak valid.');
         }
         //  $semester = penataanbatas1::all(); // Sesuaikan dengan model dan tabel semester Anda
 
-        return view('admin.penataanbatas.create', compact('semester', 'model'));
+        return view('admin.penataanbatas.create', compact('semester', 'model', 'semester', 'years'));
     }
     public function store(Request $request)
     {
@@ -112,16 +142,16 @@ class PenataanBatasController extends Controller
         }
 
         $data = $request->validate([
-            'p_batas' => 'required|integer|max:255',
-            'tahun' => 'required|date|max:255',
-            'panjang' => 'required|integer|max:255',
-            'jmlh_batas' => 'required|integer|max:255',
-            'nomor' => 'required|integer|max:255',
+            'p_batas' => 'required|string|max:255',
+            'tahun' => 'required|string|max:255',
+            'panjang' => 'required|string|max:255',
+            'jmlh_batas' => 'required|string|max:255',
+            'nomor' => 'required|string|max:255',
             'tanggal' => 'required|date|max:255',
-            'baik' => 'required|integer|max:255',
-            'rusak' => 'required|integer|max:255',
-            'hilang' => 'required|integer|max:255',
-            'jmlh_pal' => 'required|integer|max:255',
+            'baik' => 'required|numeric|max:255',
+            'rusak' => 'required|numeric|max:255',
+            'hilang' => 'required|numeric|max:255',
+            'jmlh_pal' => 'required|numeric|max:255',
             'keterangan' => 'nullable',
         ]);
 
@@ -139,6 +169,11 @@ class PenataanBatasController extends Controller
 
     public function edit($semester, $id)
     {
+        $currentYear = date('Y');
+        $years = range($currentYear - 5, $currentYear);
+        $years = array_reverse($years);
+        $model = $this->modelMapping[$semester] ?? null;
+        $model = $this->modelMapping[$semester] ?? null;
         $model = $this->modelMapping[$semester] ?? null;
 
         if (!$model) {
@@ -147,7 +182,7 @@ class PenataanBatasController extends Controller
 
         $data = $model::findOrFail($id);
 
-        return view('admin.penataanbatas.edit', compact('semester', 'data'));
+        return view('admin.penataanbatas.edit', compact('semester', 'data', 'years'));
     }
 
     public function update(Request $request, $semester, $id)
@@ -161,16 +196,16 @@ class PenataanBatasController extends Controller
         }
 
         $data = $request->validate([
-            'p_batas' => 'required|integer|max:255',
-            'tahun' => 'required|date|max:255',
-            'panjang' => 'required|integer|max:255',
-            'jmlh_batas' => 'required|integer|max:255',
-            'nomor' => 'required|integer|max:255',
+            'p_batas' => 'required|string|max:255',
+            'tahun' => 'required|string|max:255',
+            'panjang' => 'required|string|max:255',
+            'jmlh_batas' => 'required|string|max:255',
+            'nomor' => 'required|string|max:255',
             'tanggal' => 'required|date|max:255',
-            'baik' => 'required|integer|max:255',
-            'rusak' => 'required|integer|max:255',
-            'hilang' => 'required|integer|max:255',
-            'jmlh_pal' => 'required|integer|max:255',
+            'baik' => 'required|numeric|max:255',
+            'rusak' => 'required|numeric|max:255',
+            'hilang' => 'required|numeric|max:255',
+            'jmlh_pal' => 'required|numeric|max:255',
             'keterangan' => 'nullable',
         ]);
 

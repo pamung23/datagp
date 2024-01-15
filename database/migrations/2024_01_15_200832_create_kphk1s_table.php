@@ -11,15 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kphk2s', function (Blueprint $table) {
+        Schema::create('kphk1s', function (Blueprint $table) {
             $table->id();
             $table->integer('satker_id')->default('36');
             $table->string('nama');
-            $table->integer('nomor');
+            $table->string('nomor');
             $table->date('tanggal');
-            $table->integer('luas');
-            $table->integer('register');
+            $table->string('luas');
+            $table->integer('no_register_kawasan')->default('100242015');
             $table->string('keterangan')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
             $table->timestamps();
         });
     }
@@ -29,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kphk2s');
+        Schema::dropIfExists('kphk1s');
     }
 };

@@ -25,9 +25,10 @@
             <div class="statbox widget box box-shadow">
                 <div class="widget-header">
                     <div class="row">
-                        <div class="col-xl-12 col-md-12 col-sm-12 col-12">
+                        <div class="col-xl-12 col-md-12 col-sm-12 col-12 " style="margin-left: 12px;">
+                            <br>
                             <h3>Semester {{ $semester }}</h3>
-                            <h4>Peralatan tangan Pengendalian Kebakaran Hutan</h4>
+                            <h4>Tambah Data Peralatan tangan Pengendalian Kebakaran Hutan</h4>
                         </div>
                     </div>
                 </div>
@@ -181,7 +182,7 @@
                                         placeholder="Masukkan Rusak" required>
                                 </div>
                                 <div class="thick-hr"></div>
-                                <h6>Chinsaw</h6>
+                                <h6>Chainsaw</h6>
                                 <div class="form-group">
                                     <label for="baik12">Baik</label>
                                     <input type="number" class="form-control" name="baik12" placeholder="Masukkan Baik"

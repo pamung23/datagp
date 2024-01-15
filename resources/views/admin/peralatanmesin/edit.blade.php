@@ -23,7 +23,8 @@
             <div class="statbox widget box box-shadow">
                 <div class="widget-header">
                     <div class="row">
-                        <div class="col-xl-12 col-md-12 col-sm-12 col-12">
+                        <div class="col-xl-12 col-md-12 col-sm-12 col-12 " style="margin-left: 12px;">
+                            <br>
                             <h3>Semester {{ $semester }}</h3>
                             <h4>Peralatan Mesin Pengendalian Kebakaran Hutan</h4>
                         </div>
@@ -48,10 +49,6 @@
                                 @csrf
                                 @method('PUT')
                                 <input type="hidden" name="semester" value="{{ $semester }}">
-
-                                <div class="thick-hr"></div>
-                                <h6>Daops/Non Daops</h6>
-                                <div class="thick-hr"></div>
                                 <div class="form-group">
                                     <label for="daops">Daops/Non Daops</label>
                                     <input type="text" class="form-control" name="daops"
@@ -142,7 +139,6 @@
                                 </div>
                                 <div class="thick-hr"></div>
                                 <h6>Selang Kirim</h6>
-                                <div class="thick-hr"></div>
                                 <h6>1,5'</h6>
                                 <div class="form-group">
                                     <label for="baik8">Baik</label>
@@ -167,7 +163,6 @@
                                 </div>
                                 <div class="thick-hr"></div>
                                 <h6>Nozel Variable</h6>
-                                <div class="thick-hr"></div>
                                 <h6>1,5'</h6>
                                 <div class="form-group">
                                     <label for="baik10">Baik</label>

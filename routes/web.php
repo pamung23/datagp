@@ -94,7 +94,7 @@ Route::get('/forgotpassword', function () {
 })->middleware('auth')->name('password.request');
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-
+    Route::get('/profil', [AuthController::class, 'profil'])->name('profil');
     // Start Tahun
     Route::get('/desaintapak', [DesainTapakController::class, 'index'])->name('desaintapak.index');
     Route::get('/desaintapak/create', [DesainTapakController::class, 'create'])->name('desaintapak.create');
@@ -408,7 +408,9 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/peralatanmesin/{semester}/{id}/update', [PeralatanMesinController::class, 'update'])->name('peralatanmesin.update');
     Route::delete('/peralatanmesin/{semester}/{id}/destroy', [PeralatanMesinController::class, 'destroy'])->name('peralatanmesin.destroy');
 
-    //
+    // 
+    Route::get('penangananjenispetaall', [PenangananJenisController::class, 'showAllDataOnMap'])->name('penangananjenis.petaall');
+    Route::get('/penangananjenispeta/{semester}/{id}{latitude}/{longitude}',  [PenangananJenisController::class, 'showPeta'])->name('penangananjenis.peta');
     Route::get('penangananjenis', [PenangananJenisController::class, 'index'])->name('penangananjenis.index');
     Route::get('penangananjenis/semester/{semester}', [PenangananJenisController::class, 'index'])->name('penangananjenis.index.semester');
     Route::get('/penangananjenis/export', [PenangananJenisController::class, 'exportToExcel'])->name('penangananjenis.export');

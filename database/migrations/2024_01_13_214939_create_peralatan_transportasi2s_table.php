@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('peralatan_transportasi1s', function (Blueprint $table) {
+        Schema::create('peralatan_transportasi2s', function (Blueprint $table) {
             $table->id();
             $table->integer('satker_id')->default('239807');
             $table->string('daops');
@@ -34,6 +34,8 @@ return new class extends Migration
             $table->integer('rusak8');
             $table->integer('lain2');
             $table->string('keterangan')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
             $table->timestamps();
         });
     }
@@ -43,6 +45,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('peralatan_transportasi1s');
+        Schema::dropIfExists('peralatan_transportasi2s');
     }
 };

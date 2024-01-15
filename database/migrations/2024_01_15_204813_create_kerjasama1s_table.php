@@ -23,6 +23,8 @@ return new class extends Migration
             $table->date('tanggal_awal_berlaku');
             $table->date('tanggal_akhir_berlaku');
             $table->string('keterangan')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
             $table->timestamps();
         });
     }

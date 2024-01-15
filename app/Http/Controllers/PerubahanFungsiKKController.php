@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Exports\PerubahanFungsikkExport;
 use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\PerubahanFungsikkExportExport;
 use App\Models\perubahan_fungsikk1;
 use App\Models\perubahan_fungsikk2;
 
@@ -44,17 +42,18 @@ class PerubahanFungsiKKController extends Controller
 
     public function exportToExcel(Request $request)
     {
-        $semester = $request->query('semester', null);
-        $year = $request->query('year', null);
+        $semester = $request->get('semester');
+        $year = $request->get('year');
 
-        if ($year && $semester) {
-            return Excel::download(new PerubahanFungsikkExport($semester, $year), 'perubahanfungsikk_semester_' . $semester . '_tahun_' . $year . '.xlsx');
-        } elseif ($semester) {
-            return Excel::download(new PerubahanFungsikkExport($semester, null), 'perubahanfungsikk_semester_' . $semester . '.xlsx');
+        if ($semester === 'all') {
+            $fileName = 'Perubahan Fungsi dan Perubahan Peruntukan Kawasan Konservasi ALL semester ' . $year . '.xlsx';
+        } elseif (in_array($semester, [1, 2, 3, 4])) {
+            $fileName = 'Perubahan Fungsi dan Perubahan Peruntukan Kawasan Konservasi semester ' . $semester . ' ' . $year . '.xlsx';
         } else {
-            // Redirect to a default page if neither year nor semester is selected
-            return redirect()->route('perubahanfungsikk.index'); // Replace with your desired default route
+            return redirect()->back()->with('error', 'Invalid Semester selected for export.');
         }
+
+        return (new PerubahanFungsikkExport($semester, $year))->download($fileName);
     }
 
 
@@ -80,15 +79,15 @@ class PerubahanFungsiKKController extends Controller
         }
 
         $data = $request->validate([
-            'nomor1' => 'required|integer|max:255',
+            'nomor1' => 'required|string|max:255',
             'tanggal1' => 'required|date|max:255',
-            'luas1' => 'required|integer|max:255',
-            'nomor2' => 'required|integer|max:255',
+            'luas1' => 'required|string|max:255',
+            'nomor2' => 'required|string|max:255',
             'tanggal2' => 'required|date|max:255',
-            'luas2' => 'required|integer|max:255',
+            'luas2' => 'required|string|max:255',
             'fungsi' => 'required|string|max:255',
             'nama' => 'required|string|max:255',
-            'luas3' => 'required|integer|max:255',
+            'luas3' => 'required|string|max:255',
             'keterangan' => 'nullable',
         ]);
 
@@ -128,15 +127,15 @@ class PerubahanFungsiKKController extends Controller
         }
 
         $data = $request->validate([
-            'nomor1' => 'required|integer|max:255',
+            'nomor1' => 'required|string|max:255',
             'tanggal1' => 'required|date|max:255',
-            'luas1' => 'required|integer|max:255',
-            'nomor2' => 'required|integer|max:255',
+            'luas1' => 'required|string|max:255',
+            'nomor2' => 'required|string|max:255',
             'tanggal2' => 'required|date|max:255',
-            'luas2' => 'required|integer|max:255',
+            'luas2' => 'required|string|max:255',
             'fungsi' => 'required|string|max:255',
             'nama' => 'required|string|max:255',
-            'luas3' => 'required|integer|max:255',
+            'luas3' => 'required|string|max:255',
             'keterangan' => 'nullable',
         ]);
 

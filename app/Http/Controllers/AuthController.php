@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    public function profil()
+    {
+        return view('auth.profil');
+    }
+
     public function showLoginForm()
     {
         return view('login');
@@ -26,6 +31,12 @@ class AuthController extends Controller
             // Authentication passed...
             $user = Auth::user();
             User::where('id', $user->id)->update(['last_login' => now()]);
+            // Memeriksa apakah pengguna diblokir
+            if ($user->blokir === 'Y') {
+                Auth::logout(); // Logout pengguna
+                return back()->withErrors(['username' => 'Akun Anda telah diblokir. Harap hubungi administrator.']);
+            }
+
             // Redirect based on user level
             $allowedLevels = ['Admin', 'Balai', 'Wilayah Cianjur', 'Wilayah Sukabumi', 'Wilayah Bogor'];
 

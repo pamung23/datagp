@@ -19,27 +19,39 @@
         <div class="widget-header">
             <div class="row py-2 m-auto">
                 <div class="col-xl-6 col-md-6 col-sm-6 col-6">
-
                     <h4>Peralatan Transportasi Pengendalian Kebakaran Hutan</h4>
                 </div>
+                @if($semester !== 'all')
                 <div class="col-xl-6 col-md-6 col-sm-6 col-6 text-right m-auto">
                     <a href="{{ route('peralatantransportasi.create', ['semester' => $semester]) }}"
                         class="btn btn-outline-primary btn-sm">Tambah Data</a>
                 </div>
+                @endif
             </div>
         </div>
+        @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+        @endif
+        @if(session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+        @endif
         <div class="widget-content widget-content-area br-6">
             <form action="{{ route('peralatantransportasi.index') }}" method="GET" class="mb-4 mt-3 ml-4">
                 <div class="form-group d-flex">
-                    <div class="mr-3">
-                        <label for="semester">Semester:</label>
+                    <div class="mr-3 float-left">
+                        <label for="semester"></label>
                         <select name="semester" id="semester" class="selectpicker" data-style="btn-outline-primary">
                             <option value="1" @if ($semester==1) selected @endif>Semester 1</option>
                             <option value="2" @if ($semester==2) selected @endif>Semester 2</option>
+                            <option value="all" @if($semester=="all" ) selected @endif>All</option>
                         </select>
                     </div>
                     <div>
-                        <label for="year">Tahun:</label>
+                        <label for="year"></label>
                         <select name="year" id="year" class="selectpicker" data-style="btn-outline-primary">
                             <option value="" selected>Pilih Tahun</option>
                             @foreach ($uniqueYears as $uniqueYear)
@@ -49,7 +61,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="ml-auto mr-2">
+                    <div class="ml-auto mr-2 mt-2">
                         @if ($year)
                         <a href="{{ route('peralatantransportasi.export', ['semester' => $semester, 'year' => $year]) }}"
                             class="btn btn-outline-success btn-sm">Export to Excel</a>
@@ -63,21 +75,23 @@
             <table id="zero-config" class="table table-striped" style="width:100%">
                 <thead>
                     <tr>
-                        <th>No</th>
+                        <th class="text-center">No</th>
                         <th class="text-center">Satuan Kerja (Satker ID)</th>
+                        <th class="text-center">Resort</th>
                         <th class="text-center">Daops/Non Daops</th>
-                        <th class="text-center" colspan="10">Transportasi Darat (Unit)</th>
-                        <th class="text-center" colspan="6">Transportasi Air (Unit)</th>
-                        <th></th>
-                        <th></th>
+                        <th class="text-center" colspan="11">Transportasi Darat (Unit)</th>
+                        <th class="text-center" colspan="7">Transportasi Air (Unit)</th>
+                        <th class="text-center">Penambah Data</th>
                         <th class="text-center">Keterangan</th>
-                        <th>action</th>
-
+                        @if($semester !== 'all')
+                        <th class="text-center">Aksi</th>
+                        @endif
                     </tr>
                     <tr>
-                        <th></th>
-                        <th></th>
-                        <th></th>
+                        <th class="text-center"></th>
+                        <th class="text-center"></th>
+                        <th class="text-center"></th>
+                        <th class="text-center"></th>
                         <th class="text-center" colspan="2">Slip On Unit</th>
                         <th class="text-center" colspan="2">Monilog</th>
                         <th class="text-center" colspan="2">Sepeda Motor Patroli</th>
@@ -88,13 +102,17 @@
                         <th class="text-center" colspan="2">Klotok</th>
                         <th class="text-center" colspan="2">Katinting</th>
                         <th class="text-center">Lain-Lain</th>
+                        <th class="text-center"></th>
+                        <th class="text-center"></th>
+                        @if($semester !== 'all')
                         <th></th>
-                        <th></th>
+                        @endif
                     </tr>
                     <tr>
+                        <th class="text-center"></th>
+                        <th class="text-center"></th>
                         <th></th>
-                        <th></th>
-                        <th></th>
+                        <th class="text-center"></th>
                         <th class="text-center">Baik</th>
                         <th class="text-center">Rusak </th>
                         <th class="text-center">Baik</th>
@@ -112,8 +130,11 @@
                         <th class="text-center">Rusak</th>
                         <th class="text-center">Baik</th>
                         <th class="text-center">Rusak</th>
+                        <th class="text-center"></th>
                         <th></th>
+                        <th class="text-center"></th> @if($semester !== 'all')
                         <th></th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -121,26 +142,35 @@
                     <tr>
                         <td class="text-center">{{ $loop->iteration }}</td>
                         <td class="text-center">{{ $item->satker_id }}</td>
-                        <td>{{ $item->daops }}</td>
-                        <td>{{ $item->baik1 }}</td>
-                        <td>{{ $item->rusak1 }}</td>
-                        <td>{{ $item->baik2 }}</td>
-                        <td>{{ $item->rusak2 }}</td>
-                        <td>{{ $item->baik3 }}</td>
-                        <td>{{ $item->rusak3 }}</td>
-                        <td>{{ $item->baik4 }}</td>
-                        <td>{{ $item->rusak4 }}</td>
-                        <td>{{ $item->baik5 }}</td>
-                        <td>{{ $item->rusak5 }}</td>
-                        <td>{{ $item->lain1 }}</td>
-                        <td>{{ $item->baik6 }}</td>
-                        <td>{{ $item->rusak6 }}</td>
-                        <td>{{ $item->baik7 }}</td>
-                        <td>{{ $item->rusak7 }}</td>
-                        <td>{{ $item->baik8 }}</td>
-                        <td>{{ $item->rusak8 }}</td>
-                        <td>{{ $item->lain2 }}</td>
-                        <td>{{ $item->keterangan }}</td>
+                        <td class="text-center">
+                            @if ($item->user && $item->user->resort)
+                            {{ $item->user->resort->nama }}
+                            @else
+                            Unknown Resort
+                            @endif
+                        </td>
+                        <td class="text-center">{{ $item->daops }}</td>
+                        <td class="text-center">{{ $item->baik1 }}</td>
+                        <td class="text-center">{{ $item->rusak1 }}</td>
+                        <td class="text-center">{{ $item->baik2 }}</td>
+                        <td class="text-center">{{ $item->rusak2 }}</td>
+                        <td class="text-center">{{ $item->baik3 }}</td>
+                        <td class="text-center">{{ $item->rusak3 }}</td>
+                        <td class="text-center">{{ $item->baik4 }}</td>
+                        <td class="text-center">{{ $item->rusak4 }}</td>
+                        <td class="text-center">{{ $item->baik5 }}</td>
+                        <td class="text-center">{{ $item->rusak5 }}</td>
+                        <td class="text-center">{{ $item->lain1 }}</td>
+                        <td class="text-center">{{ $item->baik6 }}</td>
+                        <td class="text-center">{{ $item->rusak6 }}</td>
+                        <td class="text-center">{{ $item->baik7 }}</td>
+                        <td class="text-center">{{ $item->rusak7 }}</td>
+                        <td class="text-center">{{ $item->baik8 }}</td>
+                        <td class="text-center">{{ $item->rusak8 }}</td>
+                        <td class="text-center">{{ $item->lain2 }}</td>
+                        <td class="text-center">{{ $item->user ? $item->user->nama_lengkap : 'Unknown User' }}</td>
+                        <td class="text-center">{{ $item->keterangan }}</td>
+                        @if($semester !== 'all')
                         <td>
                             <a href="{{ route('peralatantransportasi.edit', ['semester' => $semester, 'id' => $item->id]) }}"
                                 class="btn btn-outline-warning btn-sm" class="text-center">Edit</a>
@@ -154,6 +184,7 @@
                                     class="text-center">Hapus</button>
                             </form>
                         </td>
+                        @endif
                     </tr>
                     @endforeach
                 </tbody>

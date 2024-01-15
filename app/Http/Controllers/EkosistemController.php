@@ -43,17 +43,18 @@ class EkosistemController extends Controller
 
     public function exportToExcel(Request $request)
     {
-        $semester = $request->query('semester', null);
-        $year = $request->query('year', null);
+        $semester = $request->get('semester');
+        $year = $request->get('year');
 
-        if ($year && $semester) {
-            return Excel::download(new EkosistemExport($semester, $year), 'ekosistem_semester_' . $semester . '_tahun_' . $year . '.xlsx');
-        } elseif ($semester) {
-            return Excel::download(new EkosistemExport($semester, null), 'ekosistem_semester_' . $semester . '.xlsx');
+        if ($semester === 'all') {
+            $fileName = 'Ekosistem Kawasan Konservasi ALL semester ' . $year . '.xlsx';
+        } elseif (in_array($semester, [1, 2, 3, 4])) {
+            $fileName = 'Ekosistem Kawasan Konservasi semester ' . $semester . ' ' . $year . '.xlsx';
         } else {
-            // Redirect to a default page if neither year nor semester is selected
-            return redirect()->route('ekosistem.index'); // Replace with your desired default route
+            return redirect()->back()->with('error', 'Invalid Semester selected for export.');
         }
+
+        return (new EkosistemExport($semester, $year))->download($fileName);
     }
 
 
@@ -79,17 +80,13 @@ class EkosistemController extends Controller
         }
 
         $data = $request->validate([
-            'tipe.*' => 'required|string|max:255',
-            'luas.*' => 'required|numeric|max:255',
+            'tipe' => 'required|string|max:255',
+            'luas' => 'required|string|max:255',
             'keterangan' => 'nullable|string',
         ]);
 
         $ekosistem = $ekosmodel::create($data);
-        // Handle array data and save them if needed
-        if ($request->has('array_data')) {
-            $arrayData = $request->input('array_data');
-            $ekosistem->arrayData()->createMany($arrayData);
-        }
+
         return redirect()->route('ekosistem.index')->with('success', 'Data berhasil ditambahkan.');
     }
 
@@ -118,27 +115,18 @@ class EkosistemController extends Controller
         $data = $model::findOrFail($id);
 
         $validatedData = $request->validate([
-            'tipe.*' => 'required|string|max:255',
-            'luas.*' => 'required|numeric|max:255',
+            'tipe' => 'required|string|max:255',
+            'luas' => 'required|string|max:255',
             'keterangan' => 'nullable|string',
         ]);
 
         $data->update($validatedData);
-
-        // Update JSON fields
-        $tipe = $request->input('tipe', []);
-        $luas = $request->input('luas', []);
-
-        $data->update([
-            'tipe' => $tipe,
-            'luas' => $luas,
-        ]);
         return redirect()->route('ekosistem.index')->with('success', 'Data berhasil diperbarui.');
     }
 
     public function destroy($semester, $id)
     {
-        $model = $this->modelMapping[$semester] ?? ekosistem1s::class;
+        $model = $this->modelMapping[$semester] ?? ekosistem1::class;
 
         // Temukan data yang akan dihapus berdasarkan ID
         $dataToDelete = $model::findOrFail($id);

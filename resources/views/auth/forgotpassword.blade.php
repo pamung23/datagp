@@ -46,10 +46,10 @@
                     </div>
                     <div class="div">
                         <h5>Email</h5>
-                        <input type="email" class="input" name="email" required>
+                        <input type="email" class="input" name="email" placeholder="Email" required>
                     </div>
                 </div>
-                <input type="submit" class="btn" value="Login">
+                <input type="submit" class="btn" value="Kirim">
             </form>
         </div>
         <div class="footer">

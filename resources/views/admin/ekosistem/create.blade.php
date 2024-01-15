@@ -28,7 +28,7 @@
                         <div class="col-xl-12 col-md-12 col-sm-12 col-12" style="margin-left: 12px;">
                             <br>
                             <h3>Semester {{ $semester }}</h3>
-                            <h4>Ekosistem Kawasan Konservasi</h4>
+                            <h4>Tambah Data Ekosistem Kawasan Konservasi</h4>
                         </div>
                     </div>
                 </div>
@@ -48,45 +48,26 @@
                             <form action="{{ route('ekosistem.store', ['semester' => $semester]) }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="semester" value="{{ $semester }}">
-                                <div class="form-group" id="prasarana-container">
-                                    <label>Ekosistem Kawasan Konservasi</label>
-
-                                    <table class="table table-bordered table-responsive-lg" id="prasarana-table">
-                                        <thead>
-                                            <tr>
-                                                <th class="col-md-8">Tipe Ekosistem</th>
-                                                <th class="col-md-6 ">Luas</th>
-                                                <th class="col-md-1">Aksi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr class="prasarana-item">
-                                                <td>
-                                                    <select name="tipe[]" class="form-control" required>
-                                                        <option value="Ekosistem Hutan Pamah (Lowland Forest)">Ekosistem
-                                                            Hutan Pamah (Lowland Forest)</option>
-                                                        <option value="Hutan Pantai">Hutan Pantai</option>
-                                                        <option value="Hutan Dipterokarpa">Hutan Dipterokarpa</option>
-                                                        <!-- Tambahkan opsi lainnya sesuai kebutuhan -->
-                                                    </select>
-                                                </td>
-                                                <td>
-                                                    <input type="number" name="luas[]" class="form-control" step="0.01"
-                                                        pattern="[0-9]+([\.,][0-9]+)?"
-                                                        title="Masukkan angka desimal dengan menggunakan tanda titik sebagai pemisah"
-                                                        required>
-
-                                                </td>
-                                                <td>
-                                                    <button type="button"
-                                                        class="btn btn-danger btn-remove">Hapus</button>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-
-                                    <!-- Tombol Tambah -->
-                                    <button type="button" class="btn btn-success btn-add">Tambah Prasarana</button>
+                                <div class="form-group">
+                                    <label for="tipe">Tipe Ekosistem</label>
+                                    <select name="tipe" class="form-control" required>
+                                        <option value="Hutan Dipterokarpa">Hutan Dipterokarpa</option>
+                                        <option value="Hutan Karangas">Hutan Karangas</option>
+                                        <option value="Rawa">Rawa</option>
+                                        <option value="Rawa Gambut">Rawa Gambut</option>
+                                        <option value="Karst Dan Gua">Karst Dan Gua</option>
+                                        <option value="Savana">Savana</option>
+                                        <option value="Hutan Pegunungan Bawah">Hutan Pegunungan Bawah</option>
+                                        <option value="Hutan Pegunungan Atas">Hutan Pegunungan Atas</option>
+                                        <option value="Hutan Sub Alpin">Hutan Sub Alpin</option>
+                                        <option value="Hutan Alpin">Hutan Alpin</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="luas">Tipe Ekosistem</label>
+                                    <input type="string" name="luas" class="form-control" pattern="[0-9]+([\.,][0-9]+)?"
+                                        title="Masukkan angka desimal dengan menggunakan tanda titik sebagai pemisah"
+                                        required>
                                 </div>
                                 <div class="form-group">
                                     <label for="keterangan">Keterangan</label>
@@ -110,7 +91,7 @@
 <script src="{{ asset('plugins/select2/custom-select2.js') }}"></script>
 <script src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
 <script src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
-<script>
+{{-- <script>
     $(document).ready(function () {
         // Tombol Tambah Prasarana
         $(".btn-add").click(function () {
@@ -125,5 +106,5 @@
             $(this).closest("tr").remove();
         });
     });
-</script>
+</script> --}}
 @endpush

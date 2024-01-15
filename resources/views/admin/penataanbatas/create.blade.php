@@ -24,7 +24,8 @@
             <div class="statbox widget box box-shadow">
                 <div class="widget-header">
                     <div class="row">
-                        <div class="col-xl-12 col-md-12 col-sm-12 col-12">
+                        <div class="col-xl-12 col-md-12 col-sm-12 col-12 " style="margin-left: 12px;">
+                            <br>
                             <h3>Semester {{ $semester }}</h3>
                             <h4>Tambah Data Penataan Batas Kawasan Konservasi</h4>
                         </div>
@@ -46,63 +47,65 @@
                             <form action="{{ route('penataanbatas.store', ['semester' => $semester]) }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="semester" value="{{ $semester }}">
-                                <h6>Penataan Batas Kawasan Konservasi</h6>
                                 <div class="form-group">
                                     <label for="p_batas">Panjang Batas (KM)</label>
-                                    <input type="number" class="form-control" name="p_batas"
+                                    <input type="text" class="form-control" name="p_batas"
                                         placeholder="Masukkan Panjang Batas " required>
                                 </div>
                                 <div class="thick-hr"></div>
                                 <h6>Realisasi Tata Batas</h6>
                                 <div class="form-group">
                                     <label for="tahun">Tahun</label>
-                                    <input type="date" class="form-control" name="tahun" placeholder="Masukkan Tahun"
-                                        required>
+                                    <select class="form-control selectpicker" name="tahun" required>
+                                        <option value="">Pilih Tahun</option>
+                                        @foreach($years as $year)
+                                        <option value="{{ $year }}">{{ $year }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                                 <div class="form-group">
                                     <label for="panjang">Panjang (KM)</label>
-                                    <input type="number" class="form-control" name="panjang"
+                                    <input type="text" class="form-control" name="panjang"
                                         placeholder="Masukkan Panjang" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="jmlh_batas">Jumlah Pal Batas</label>
-                                    <input type="number" class="form-control" name="jmlh_batas"
+                                    <input type="text" class="form-control" name="jmlh_batas"
                                         placeholder="Masukkan Jumlah Pal Batas" required>
                                 </div>
                                 <div class="thick-hr"></div>
                                 <h6>Berita Acara Tata Batas</h6>
                                 <div class="form-group">
                                     <label for="nomor">Nomor</label>
-                                    <input type="number" class="form-control" name="nomor" placeholder="Masukkan Nomor"
+                                    <input type="text" class="form-control" name="nomor" placeholder="Masukkan Nomor"
                                         required>
                                 </div>
                                 <div class="form-group">
                                     <label for="tanggal">Tanggal</label>
-                                    <input type="date" class="form-control" name="tanggal"
-                                        placeholder="Masukkan Tanggal" required>
+                                    <input id="basicFlatpickr" class="form-control flatpickr flatpickr-input "
+                                        type="text" placeholder="Pilih Tanggal.." id="tanggal" name="tanggal" required>
                                 </div>
                                 <div class="thick-hr"></div>
                                 <h6>Kondisi Pal Batas / Rambu Suar (Jumlah)</h6>
                                 <div class="form-group">
                                     <label for="baik">Baik</label>
-                                    <input type="number" class="form-control" name="baik"
+                                    <input type="number" class="form-control" name="baik" id="baik"
                                         placeholder="Masukkan Yang Baik" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="Rusak">Rusak</label>
-                                    <input type="number" class="form-control" name="rusak"
+                                    <input type="number" class="form-control" name="rusak" id="rusak"
                                         placeholder="Masukkan Yang Rusak" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="hilang">Hilang</label>
-                                    <input type="number" class="form-control" name="hilang"
+                                    <input type="number" class="form-control" name="hilang" id="hilang"
                                         placeholder="Masukkan Yang Hilang" required>
                                 </div>
-                                <div class="thick-hr"></div>
                                 <div class="form-group">
                                     <label for="jmlh_pal">Jumlah Pal Batas</label>
-                                    <input type="number" class="form-control" name="jmlh_pal"
-                                        placeholder="Masukkan Jumlah Pal Batas" required>
+                                    <input type="number" class="form-control" name="jmlh_pal" id="jmlh_pal"
+                                        placeholder="0" required readonly>
                                 </div>
                                 <hr>
                                 <div class="form-group">
@@ -127,5 +130,28 @@
 <script src="{{ asset('plugins/select2/custom-select2.js') }}"></script>
 <script src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
 <script src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
+<script>
+    // Menangani perubahan nilai pada input baik, rusak, dan hilang
+    const baikInput = document.getElementById('baik');
+    const rusakInput = document.getElementById('rusak');
+    const hilangInput = document.getElementById('hilang');
+    const jumlahPalInput = document.getElementById('jmlh_pal');
 
+    [baikInput, rusakInput, hilangInput].forEach(input => {
+        input.addEventListener('input', updateJumlahPal);
+    });
+
+    function updateJumlahPal() {
+        // Mengambil nilai dari input baik, rusak, dan hilang
+        const baik = parseInt(baikInput.value) || 0;
+        const rusak = parseInt(rusakInput.value) || 0;
+        const hilang = parseInt(hilangInput.value) || 0;
+
+        // Menghitung jumlah total
+        const jumlahPal = baik + rusak + hilang;
+
+        // Mengisi nilai ke input jumlahPal
+        jumlahPalInput.value = jumlahPal;
+    }
+</script>
 @endpush

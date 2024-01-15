@@ -27,8 +27,8 @@
                     <div class="row">
                         <div class="col-xl-12 col-md-12 col-sm-12 col-12" style="margin-left: 12px;">
                             <br>
-                            <h3>Edit Data</h3>
-                            <h4>Ekosistem Kawasan Konservasi - Semester {{ $semester }}</h4>
+                            <h3>Semester {{ $semester }}</h3>
+                            <h4>Edit Ekosistem Kawasan Konservasi </h4>
                         </div>
                     </div>
                 </div>
@@ -50,75 +50,37 @@
                                 @csrf
                                 @method('PUT')
                                 <input type="hidden" name="semester" value="{{ $semester }}">
-                                <div class="form-group" id="prasarana-container">
-                                    <label>Ekosistem Kawasan Konservasi</label>
 
-                                    <table class="table table-bordered table-responsive-lg" id="prasarana-table">
-                                        <thead>
-                                            <tr>
-                                                <th class="col-md-8">Tipe Ekosistem</th>
-                                                <th class="col-md-6">Luas</th>
-                                                <th class="col-md-1">Aksi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @if (is_array($dataSebaran) && count($dataSebaran) > 0)
-                                            @foreach($dataSebaran as $index => $sebaran)
-                                            <tr class="prasarana-item">
-                                                <td>
-                                                    <select name="tipe[]" class="form-control">
-                                                        <option value="Ekosistem Hutan Pamah (Lowland Forest)" {{
-                                                            $sebaran=='Ekosistem Hutan Pamah (Lowland Forest)'
-                                                            ? 'selected' : '' }}>Ekosistem
-                                                            Hutan Pamah (Lowland Forest)</option>
-                                                        <option value="Hutan Pantai" {{ $sebaran=='Hutan Pantai'
-                                                            ? 'selected' : '' }}>Hutan Pantai</option>
-                                                        <option value="Hutan Dipterokarpa" {{
-                                                            $sebaran=='Hutan Dipterokarpa' ? 'selected' : '' }}>Hutan
-                                                            Dipterokarpa</option>
-                                                        <!-- Tambahkan opsi lainnya sesuai kebutuhan -->
-                                                    </select>
-                                                </td>
-                                                <td>
-                                                    <input type="number" name="luas[]" class="form-control" step="0.01"
-                                                        pattern="[0-9]+([\.,][0-9]+)?"
-                                                        title="Masukkan angka desimal dengan menggunakan tanda titik sebagai pemisah"
-                                                        required value="{{ $data->luas[$index] }}">
-                                                </td>
-                                                <td>
-                                                    <button type="button"
-                                                        class="btn btn-danger btn-remove">Hapus</button>
-                                                </td>
-                                            </tr>
-                                            @endforeach
-                                            @else
-                                            <tr class="prasarana-item">
-                                                <td>
-                                                    <select name="tipe[]" class="form-control">
-                                                        <option value="Ekosistem Hutan Pamah (Lowland Forest)">Ekosistem
-                                                            Hutan Pamah (Lowland Forest)</option>
-                                                        <!-- Lanjutkan untuk opsi lainnya -->
-                                                    </select>
-                                                </td>
-                                                <td>
-                                                    <input type="number" name="luas[]" class="form-control" step="0.01"
-                                                        pattern="[0-9]+([\.,][0-9]+)?"
-                                                        title="Masukkan angka desimal dengan menggunakan tanda titik sebagai pemisah"
-                                                        required>
-                                                </td>
-                                                <td>
-                                                    <button type="button"
-                                                        class="btn btn-danger btn-remove">Hapus</button>
-                                                </td>
-                                            </tr>
-                                            @endif
-                                        </tbody>
-                                    </table>
-
-                                    <!-- Tombol Tambah -->
-                                    <button type="button" class="btn btn-success btn-add">Tambah Prasarana</button>
+                                <div class="form-group">
+                                    <label for="tipe">Tipe Ekosistem</label>
+                                    <select name="tipe" class="form-control" required>
+                                        <option value="Hutan Dipterokarpa" {{ $data->tipe == 'Hutan Dipterokarpa' ?
+                                            'selected' : '' }}>Hutan Dipterokarpa</option>
+                                        <option value="Hutan Karangas" {{ $data->tipe == 'Hutan Karangas' ? 'selected' :
+                                            '' }}>Hutan Karangas</option>
+                                        <option value="Rawa" {{ $data->tipe == 'Rawa' ? 'selected' : '' }}>Rawa</option>
+                                        <option value="Rawa Gambut" {{ $data->tipe == 'Rawa Gambut' ? 'selected' : ''
+                                            }}>Rawa Gambut</option>
+                                        <option value="Karst Dan Gua" {{ $data->tipe == 'Karst Dan Gua' ? 'selected' :
+                                            '' }}>Karst Dan Gua</option>
+                                        <option value="Savana" {{ $data->tipe == 'Savana' ? 'selected' : '' }}>Savana
+                                        </option>
+                                        <option value="Hutan Pegunungan Bawah" {{ $data->tipe == 'Hutan Pegunungan
+                                            Bawah' ? 'selected' : '' }}>Hutan Pegunungan Bawah</option>
+                                        <option value="Hutan Pegunungan Atas" {{ $data->tipe == 'Hutan Pegunungan Atas'
+                                            ? 'selected' : '' }}>Hutan Pegunungan Atas</option>
+                                        <option value="Hutan Sub Alpin" {{ $data->tipe == 'Hutan Sub Alpin' ? 'selected'
+                                            : '' }}>Hutan Sub Alpin</option>
+                                        <option value="Hutan Alpin" {{ $data->tipe == 'Hutan Alpin' ? 'selected' : ''
+                                            }}>Hutan Alpin</option>
+                                    </select>
                                 </div>
-
+                                <div class="form-group">
+                                    <label for="luas">Luas Ekosistem</label>
+                                    <input type="string" name="luas" class="form-control" pattern="[0-9]+([\.,][0-9]+)?"
+                                        title="Masukkan angka desimal dengan menggunakan tanda titik sebagai pemisah"
+                                        required value="{{ $data->luas }}">
+                                </div>
                                 <div class="form-group">
                                     <label for="keterangan">Keterangan</label>
                                     <textarea class="form-control" name="keterangan" rows="3"
@@ -142,20 +104,5 @@
 <script src="{{ asset('plugins/select2/custom-select2.js') }}"></script>
 <script src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
 <script src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
-<script>
-    $(document).ready(function () {
-        // Tombol Tambah Prasarana
-        $(".btn-add").click(function () {
-            var newRow = $(".prasarana-item:first").clone();
-            newRow.find("input").val(""); // Kosongkan nilai input
-            newRow.find(".btn-remove").show(); // Tampilkan tombol hapus pada baris baru
-            $("#prasarana-table tbody").append(newRow);
-        });
 
-        // Tombol Hapus Prasarana
-        $(document).on("click", ".btn-remove", function () {
-            $(this).closest("tr").remove();
-        });
-    });
-</script>
 @endpush

@@ -24,7 +24,8 @@
             <div class="statbox widget box box-shadow">
                 <div class="widget-header">
                     <div class="row">
-                        <div class="col-xl-12 col-md-12 col-sm-12 col-12">
+                        <div class="col-xl-12 col-md-12 col-sm-12 col-12 " style="margin-left: 12px;">
+                            <br>
                             <h3>Semester {{ $semester }}</h3>
                             <h4>Tambah Perubahan Fungsi dan Perubahan Peruntukan Kawasan Konservasi</h4>
                         </div>
@@ -47,39 +48,39 @@
                                 method="POST">
                                 @csrf
                                 <input type="hidden" name="semester" value="{{ $semester }}">
-
-                                <div class="thick-hr"></div>
                                 <h6>Penunjukan/Penetapan Awal</h6>
                                 <div class="form-group">
                                     <label for="nomor1">Nomor SK</label>
-                                    <input type="number" class="form-control" name="nomor1"
+                                    <input type="text" class="form-control" name="nomor1"
                                         placeholder="Masukkan Nomor SK" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="tanggal1">Tanggal SK</label>
-                                    <input type="date" class="form-control" name="tanggal1"
-                                        placeholder="Masukkan Tanggal SK" required>
+                                    <label for="tanggal2">Tanggal SK</label>
+                                    <input id="basicFlatpickr" class="form-control flatpickr flatpickr-input "
+                                        type="text" placeholder="Pilih Tanggal.." id="tanggal2" name="tanggal2"
+                                        required>
                                 </div>
                                 <div class="form-group">
                                     <label for="luas1">Luas (Ha)</label>
-                                    <input type="number" class="form-control" name="luas1"
+                                    <input type="text" class="form-control" name="luas1"
                                         placeholder="Masukkan Luas (Ha)" required>
                                 </div>
                                 <div class="thick-hr"></div>
                                 <h6>Perubahan Fungsi/Peruntukan</h6>
                                 <div class="form-group">
                                     <label for="nomor2">Nomor SK</label>
-                                    <input type="number" class="form-control" name="nomor2"
+                                    <input type="text" class="form-control" name="nomor2"
                                         placeholder="Masukkan Nomor SK" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="tanggal2">Tanggal SK</label>
-                                    <input type="date" class="form-control" name="tanggal2"
-                                        placeholder="Masukkan Tanggal SK" required>
+                                    <label for="tanggal1">Tanggal SK</label>
+                                    <input id="basicFlatpickr1" class="form-control flatpickr flatpickr-input "
+                                        type="text" placeholder="Pilih Tanggal.." id="tanggal1" name="tanggal1"
+                                        required>
                                 </div>
                                 <div class="form-group">
                                     <label for="luas2">Luas (Ha)</label>
-                                    <input type="number" class="form-control" name="luas2"
+                                    <input type="tesxt" class="form-control" name="luas2"
                                         placeholder="Masukkan Luas (Ha)" required>
                                 </div>
                                 <div class="thick-hr"></div>
@@ -96,7 +97,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="luas3">Luas (Ha)</label>
-                                    <input type="number" class="form-control" name="luas3"
+                                    <input type="text" class="form-control" name="luas3"
                                         placeholder="Masukkan Luas (Ha)" required>
                                 </div>
                                 <hr>
@@ -122,5 +123,9 @@
 <script src="{{ asset('plugins/select2/custom-select2.js') }}"></script>
 <script src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
 <script src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
-
+<script>
+    var f1 = flatpickr(document.getElementById('basicFlatpickr1'));
+    var f1 = flatpickr(document.getElementById('basicFlatpickr2'));
+    var f1 = flatpickr(document.getElementById('basicFlatpickr3'));
+</script>
 @endpush

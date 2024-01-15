@@ -25,7 +25,8 @@
             <div class="statbox widget box box-shadow">
                 <div class="widget-header">
                     <div class="row">
-                        <div class="col-xl-12 col-md-12 col-sm-12 col-12">
+                        <div class="col-xl-12 col-md-12 col-sm-12 col-12 " style="margin-left: 12px;">
+                            <br>
                             <h3>Semester {{ $semester }}</h3>
                             <h4>Peralatan Tranportasi Pengendalian Kebakaran Hutan</h4>
                         </div>
@@ -48,18 +49,14 @@
                                 method="POST">
                                 @csrf
                                 <input type="hidden" name="semester" value="{{ $semester }}">
-
-                                <div class="thick-hr"></div>
-                                <h6>Daops/Non Daops</h6>
-                                <div class="thick-hr"></div>
                                 <div class="form-group">
                                     <label for="daops">Daops/Non Daops</label>
                                     <input type="text" class="form-control" name="daops"
                                         placeholder="Masukkan Daops/Non Daops" required>
                                 </div>
                                 <div class="thick-hr"></div>
-                                <h6>Transportasi Darat (Unit)</h6>
-                                <div class="thick-hr"></div>
+                                <h6 style="text-align: center; line-height: 50px;  font-weight: bold;">Transportasi
+                                    Darat (Unit)</h6>
                                 <h6>Slip On Unit</h6>
                                 <div class="form-group">
                                     <label for="baik1">Baik</label>
@@ -115,15 +112,14 @@
                                     <input type="number" class="form-control" name="rusak5" placeholder="Masukkan Rusak"
                                         required>
                                 </div>
-                                <h6>Lain-Lain</h6>
                                 <div class="form-group">
                                     <label for="lain">Lain-Lain</label>
                                     <input type="number" class="form-control" name="lain1"
                                         placeholder="Masukkan Lain-Lain" required>
                                 </div>
                                 <div class="thick-hr"></div>
-                                <h6>Transportasi Air (Unit)</h6>
-                                <div class="thick-hr"></div>
+                                <h6 style="text-align: center; line-height: 50px;  font-weight: bold;">Transportasi Air
+                                    (Unit)</h6>
                                 <h6>Boat</h6>
                                 <div class="form-group">
                                     <label for="baik6">Baik</label>
@@ -157,7 +153,6 @@
                                     <input type="number" class="form-control" name="rusak8" placeholder="Masukkan Rusak"
                                         required>
                                 </div>
-                                <h6>Lain-Lain</h6>
                                 <div class="form-group">
                                     <label for="lain2">Lain-Lain</label>
                                     <input type="number" class="form-control" name="lain2"

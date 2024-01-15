@@ -16,28 +16,89 @@ class PenangananJenisController extends Controller
         2 => penanganan_jenis2::class,
 
     ];
+    public function showAllDataOnMap()
+    {
+        $allDataByQuarter = [];
 
+        foreach ($this->modelMapping as $semester => $modelClass) {
+            $data = $modelClass::all()->map(function ($item) use ($semester) {
+                $item['semester'] = $semester;
+                return $item;
+            });
+
+            $allDataByQuarter[$semester] = $data;
+        }
+        $encodedData = base64_encode(json_encode($allDataByQuarter));
+        return view('admin.penangananjenis.petaall', compact('encodedData'));
+    }
+    public function showPeta($semester, $id)
+    {
+        $model = $this->modelMapping[$semester] ?? null;
+
+        if (!$model) {
+            return redirect()->route('penangananjenis.index.semester', ['semester' => $semester])->with('error', 'Semester tidak valid.');
+        }
+
+        $data = $model::find($id);
+        $latitude = $data->latitude; // Sesuaikan ini dengan nama properti pada model Anda
+        $longitude = $data->longitude; // Sesuaikan ini dengan nama properti pada model Anda
+        $ilmiah = $data->ilmiah;
+        return view('admin.penangananjenis.peta', compact('semester', 'model', 'data', 'latitude', 'longitude', 'ilmiah'));
+    }
     public function index(Request $request)
     {
         $semester = $request->input('semester', 1);
-        $year = $request->input('year'); // Dapatkan tahun yang dipilih dari permintaan
+        $year = $request->input('year');
+        $modelsToQuery = [];
 
-        $model = $this->modelMapping[$semester] ?? penanganan_jenis1::class;
+        // Ambil level pengguna saat ini
+        $userLevel = auth()->user()->level;
 
-        // Ambil data berdasarkan tahun yang dipilih (jika disediakan)
-        $query = $model::query();
+        // Inisialisasi array level yang diizinkan mengakses semua triwulan
+        $levelsAllowedForAllsemester = ['Admin', 'Balai'];
 
-        if ($year) {
-            $query->whereYear('created_at', $year);
+        if (in_array($userLevel, $levelsAllowedForAllsemester)) {
+            // Jika level pengguna adalah 'Admin' atau 'Balai', perbolehkan akses ke semua triwulan
+            foreach ($this->modelMapping as $model) {
+                $modelsToQuery[] = new $model;
+            }
+        } elseif (in_array($userLevel, ['Wilayah Cianjur', 'Wilayah Sukabumi', 'Wilayah Bogor'])) {
+            // Jika level pengguna adalah 'Wilayah Cianjur', 'Wilayah Sukabumi', atau 'Wilayah Bogor',
+            // batasi akses hanya ke triwulan yang dipilih dan resort yang sesuai
+            $model = $this->modelMapping[$semester] ?? penanganan_jenis1::class;
+            $modelsToQuery[] = new $model;
         }
 
-        $penanganan_jenis = $query->get();
+        $penanganan_jenis = collect();
 
-        // Ambil tahun unik dari model yang dipilih
-        $uniqueYears = $model::selectRaw('YEAR(created_at) as year')
-            ->distinct()
-            ->orderBy('year', 'desc')
-            ->pluck('year');
+        foreach ($modelsToQuery as $model) {
+            $query = $model::query()->with('user.resort');
+
+            if ($year) {
+                $query->whereYear('created_at', $year);
+            }
+
+            // Jika level pengguna adalah 'Wilayah Cianjur', 'Wilayah Sukabumi', atau 'Wilayah Bogor',
+            // tambahkan kondisi untuk membatasi berdasarkan resort
+            if (in_array($userLevel, ['Wilayah Cianjur', 'Wilayah Sukabumi', 'Wilayah Bogor'])) {
+                $query->whereHas('user.resort', function ($subquery) use ($userLevel) {
+                    $subquery->where('nama', auth()->user()->resort->nama);
+                });
+            }
+
+            $penanganan_jenis = $penanganan_jenis->merge($query->get());
+        }
+
+        $uniqueYears = collect();
+
+        foreach ($modelsToQuery as $model) {
+            $years = $model::selectRaw('YEAR(created_at) as year')
+                ->distinct()
+                ->orderBy('year', 'desc')
+                ->pluck('year');
+
+            $uniqueYears = $uniqueYears->merge($years);
+        }
 
         return view('admin.penangananjenis.index', compact('penanganan_jenis', 'semester', 'uniqueYears', 'year'));
     }
@@ -45,17 +106,18 @@ class PenangananJenisController extends Controller
 
     public function exportToExcel(Request $request)
     {
-        $semester = $request->query('semester', null);
-        $year = $request->query('year', null);
+        $semester = $request->get('semester');
+        $year = $request->get('year');
 
-        if ($year && $semester) {
-            return Excel::download(new PenangananJenisExport($semester, $year), 'penangananjenis_semester_' . $semester . '_tahun_' . $year . '.xlsx');
-        } elseif ($semester) {
-            return Excel::download(new PenangananJenisExport($semester, null), 'penangananjenis_semester_' . $semester . '.xlsx');
+        if ($semester === 'all') {
+            $fileName = 'Penanganan Jenis Asing Invasif (IAS) di Kawasan Konservasi ALL semester ' . $year . '.xlsx';
+        } elseif (in_array($semester, [1, 2])) {
+            $fileName = 'Penanganan Jenis Asing Invasif (IAS) di Kawasan Konservasi semester ' . $semester . ' ' . $year . '.xlsx';
         } else {
-            // Redirect to 'penangananjenis.index' route if neither year nor semester is selected
-            return redirect()->route('penangananjenis.index');
+            return redirect()->back()->with('error', 'Invalid Semester selected for export.');
         }
+
+        return (new PenangananJenisExport($semester, $year))->download($fileName);
     }
 
     public function create($semester)

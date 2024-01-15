@@ -208,7 +208,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('zonasi.index') }}">Zonasi
+                        <a href="{{ route('zonasi.index') }}">Penataan Kawasan Konservasi
                         </a>
                     </li>
                     <li>

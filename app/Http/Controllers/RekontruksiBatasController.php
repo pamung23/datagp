@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\RekontruksiBatasExport;
+use Illuminate\Support\Carbon;
 use App\Models\rekontruksi_batas1;
 use App\Models\rekontruksi_batas2;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\RekontruksiBatasExport;
 
 
 class RekontruksiBatasController extends Controller
@@ -20,24 +21,80 @@ class RekontruksiBatasController extends Controller
     public function index(Request $request)
     {
         $semester = $request->input('semester', 1);
-        $year = $request->input('year'); // Dapatkan tahun yang dipilih dari permintaan
+        $year = $request->input('year');
+        $modelsToQuery = [];
 
-        $model = $this->modelMapping[$semester] ?? rekontruksi_batas1::class;
+        // Ambil level pengguna saat ini
+        $userLevel = auth()->user()->level;
 
-        // Ambil data berdasarkan tahun yang dipilih (jika disediakan)
-        $query = $model::query();
+        // Inisialisasi array level yang diizinkan mengakses semua triwulan
+        $levelsAllowedForAllsemester = ['Admin', 'Balai'];
 
-        if ($year) {
-            $query->whereYear('created_at', $year);
+        if (in_array($userLevel, $levelsAllowedForAllsemester)) {
+            // Jika level pengguna adalah 'Admin' atau 'Balai', perbolehkan akses ke semua triwulan
+            foreach ($this->modelMapping as $model) {
+                $modelsToQuery[] = new $model;
+            }
+        } elseif (in_array($userLevel, ['Wilayah Cianjur', 'Wilayah Sukabumi', 'Wilayah Bogor'])) {
+            // Jika level pengguna adalah 'Wilayah Cianjur', 'Wilayah Sukabumi', atau 'Wilayah Bogor',
+            // batasi akses hanya ke triwulan yang dipilih dan resort yang sesuai
+            $model = $this->modelMapping[$semester] ?? rekontruksi_batas1::class;
+            $modelsToQuery[] = new $model;
         }
 
-        $rekontruksibatas = $query->get();
+        $rekontruksibatas = collect();
 
-        // Ambil tahun unik dari model yang dipilih
-        $uniqueYears = $model::selectRaw('YEAR(created_at) as year')
-            ->distinct()
-            ->orderBy('year', 'desc')
-            ->pluck('year');
+        foreach ($modelsToQuery as $model) {
+            $query = $model::query()->with('user.resort');
+
+            if ($year) {
+                $query->whereYear('created_at', $year);
+            }
+
+            // Jika level pengguna adalah 'Wilayah Cianjur', 'Wilayah Sukabumi', atau 'Wilayah Bogor',
+            // tambahkan kondisi untuk membatasi berdasarkan resort
+            if (in_array($userLevel, ['Wilayah Cianjur', 'Wilayah Sukabumi', 'Wilayah Bogor'])) {
+                $query->whereHas('user.resort', function ($subquery) use ($userLevel) {
+                    $subquery->where('nama', auth()->user()->resort->nama);
+                });
+            }
+
+            $rekontruksibatas = $rekontruksibatas->merge($query->get());
+        }
+
+        $uniqueYears = collect();
+
+        foreach ($modelsToQuery as $model) {
+            $years = $model::selectRaw('YEAR(created_at) as year')
+                ->distinct()
+                ->orderBy('year', 'desc')
+                ->pluck('year');
+
+            $uniqueYears = $uniqueYears->merge($years);
+        }
+        function getMonthInBahasa($englishMonth)
+        {
+            $months = [
+                'January' => 'Januari',
+                'February' => 'Februari',
+                'March' => 'Maret',
+                'April' => 'April',
+                'May' => 'Mei',
+                'June' => 'Juni',
+                'July' => 'Juli',
+                'August' => 'Agustus',
+                'September' => 'September',
+                'October' => 'Oktober',
+                'November' => 'November',
+                'December' => 'Desember',
+            ];
+
+            return $months[$englishMonth];
+        }
+        $rekontruksibatas = $rekontruksibatas->map(function ($item) {
+            $item->tanggal = $item->tanggal ? Carbon::parse($item->tanggal)->translatedFormat('d F Y') : '';
+            return $item;
+        });
 
         return view('admin.rekontruksibatas.index', compact('rekontruksibatas', 'semester', 'uniqueYears', 'year'));
     }
@@ -45,28 +102,32 @@ class RekontruksiBatasController extends Controller
 
     public function exportToExcel(Request $request)
     {
-        $semester = $request->query('semester', null);
-        $year = $request->query('year', null);
+        $semester = $request->get('semester');
+        $year = $request->get('year');
 
-        if ($year && $semester) {
-            return Excel::download(new RekontruksiBatasExport($semester, $year), 'rekontruksibatas_semester_' . $semester . '_tahun_' . $year . '.xlsx');
-        } elseif ($semester) {
-            return Excel::download(new RekontruksiBatasExport($semester, null), 'rekontruksibatas_semester_' . $semester . '.xlsx');
+        if ($semester === 'all') {
+            $fileName = 'Rekonstruksi Batas Kawasan Konservasi ALL semester ' . $year . '.xlsx';
+        } elseif (in_array($semester, [1, 2, 3, 4])) {
+            $fileName = 'Rekonstruksi Batas Kawasan Konservasi semester ' . $semester . ' ' . $year . '.xlsx';
         } else {
-            // Redirect to 'rekontruksibatas.index' route if neither year nor semester is selected
-            return redirect()->route('rekontruksibatas.index');
+            return redirect()->back()->with('error', 'Invalid Semester selected for export.');
         }
+
+        return (new RekontruksiBatasExport($semester, $year))->download($fileName);
     }
 
     public function create($semester)
     {
+        $currentYear = date('Y');
+        $years = range($currentYear - 5, $currentYear);
+        $years = array_reverse($years);
         $model = $this->modelMapping[$semester] ?? null;
         if (!$model) {
             return redirect()->route('rekontruksibatas.index.semester', ['semester' => $semester])->with('error', 'semester tidak valid.');
         }
         //  $semester = rekontruksibatas1::all(); // Sesuaikan dengan model dan tabel semester Anda
 
-        return view('admin.rekontruksibatas.create', compact('semester', 'model'));
+        return view('admin.rekontruksibatas.create', compact('semester', 'model', 'years'));
     }
     public function store(Request $request)
     {
@@ -79,11 +140,11 @@ class RekontruksiBatasController extends Controller
         }
 
         $data = $request->validate([
-            'p_batas' => 'required|integer|max:255',
-            'tahun' => 'required|date|max:255',
-            'panjang' => 'required|integer|max:255',
-            'jmlh_batas' => 'required|integer|max:255',
-            'nomor' => 'required|integer|max:255',
+            'p_batas' => 'required|string|max:255',
+            'tahun' => 'required|string|max:255',
+            'panjang' => 'required|string|max:255',
+            'jmlh_batas' => 'required|string|max:255',
+            'nomor' => 'required|string|max:255',
             'tanggal' => 'required|date|max:255',
             'keterangan' => 'nullable',
         ]);
@@ -102,15 +163,17 @@ class RekontruksiBatasController extends Controller
 
     public function edit($semester, $id)
     {
+        $currentYear = date('Y');
+        $years = range($currentYear - 5, $currentYear);
+        $years = array_reverse($years);
         $model = $this->modelMapping[$semester] ?? null;
-
         if (!$model) {
             return redirect()->route('rekontruksibatas.index', ['semester' => $semester])->with('error', 'Temester tidak valid.');
         }
 
         $data = $model::findOrFail($id);
 
-        return view('admin.rekontruksibatas.edit', compact('semester', 'data'));
+        return view('admin.rekontruksibatas.edit', compact('semester', 'data', 'years'));
     }
 
     public function update(Request $request, $semester, $id)
@@ -124,11 +187,11 @@ class RekontruksiBatasController extends Controller
         }
 
         $data = $request->validate([
-            'p_batas' => 'required|integer|max:255',
-            'tahun' => 'required|date|max:255',
-            'panjang' => 'required|integer|max:255',
-            'jmlh_batas' => 'required|integer|max:255',
-            'nomor' => 'required|integer|max:255',
+            'p_batas' => 'required|string|max:255',
+            'tahun' => 'required|string|max:255',
+            'panjang' => 'required|string|max:255',
+            'jmlh_batas' => 'required|string|max:255',
+            'nomor' => 'required|string|max:255',
             'tanggal' => 'required|date|max:255',
             'keterangan' => 'nullable',
         ]);

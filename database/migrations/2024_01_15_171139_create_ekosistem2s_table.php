@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('hasil_evaluasi2s', function (Blueprint $table) {
+        Schema::create('ekosistem2s', function (Blueprint $table) {
             $table->id();
             $table->integer('no_register_kawasan')->default('100242015');
-            $table->date('tanggal');
-            $table->string('rekomendasi');
-            $table->string('tindak');
+            $table->string('tipe');
+            $table->string('luas');
             $table->text('keterangan')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
             $table->timestamps();
         });
     }
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('hasil_evaluasi2s');
+        Schema::dropIfExists('ekosistem2s');
     }
 };

@@ -167,12 +167,12 @@
 </script>
 <script>
     // Inisialisasi peta
-const map = L.map('map').setView([-6.747446210258649, 106.9672966499052], 11);
+        const map = L.map('map').setView([-6.747446210258649, 106.9672966499052], 11);
 
-// Tambahkan tile layer (misalnya OpenStreetMap)
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-}).addTo(map);
+    // Tambahkan tile layer (misalnya OpenStreetMap)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
  // // Adding GeoJSON layer to the map
         // L.geoJSON(datajson).addTo(map);
         // L.geoJSON(json_LandUse).addTo(map);
@@ -234,7 +234,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         opacity: 0.3,
         fillOpacity: 0.0
     };
-}
+    }
 
 // Buat layer dari datajson dengan gaya yang ditetapkan
 var datajsonJSON = L.geoJson(datajson, {

@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('rencana_realisasis', function (Blueprint $table) {
+        Schema::create('hasil_evaluasi1s', function (Blueprint $table) {
             $table->id();
             $table->integer('no_register_kawasan')->default('100242015');
-            $table->string('metode_pe');
-            $table->decimal('target_ha', 10, 2);
-            $table->decimal('luas_ha', 10, 2);
-            $table->decimal('persentase_keberhasilan', 5, 2)->nullable();
-            $table->string('sumber_pembiayaan');
-            $table->string('keterangan')->nullable();
+            $table->date('tanggal');
+            $table->string('rekomendasi');
+            $table->string('tindak');
+            $table->text('keterangan')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('rencana_realisasis');
+        Schema::dropIfExists('hasil_evaluasi1s');
     }
 };

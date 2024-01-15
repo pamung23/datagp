@@ -21,24 +21,37 @@
                 <div class="col-xl-6 col-md-6 col-sm-6 col-6">
                     <h4>Penanganan Jenis Asing Invasif (IAS) di Kawasan Konservasi</h4>
                 </div>
+                @if($semester !== 'all')
                 <div class="col-xl-6 col-md-6 col-sm-6 col-6 text-right m-auto">
                     <a href="{{ route('penangananjenis.create', ['semester' => $semester]) }}"
                         class="btn btn-outline-primary btn-sm">Tambah Data</a>
                 </div>
+                @endif
             </div>
         </div>
+        @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+        @endif
+        @if(session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+        @endif
         <div class="widget-content widget-content-area br-6">
             <form action="{{ route('penangananjenis.index') }}" method="GET" class="mb-4 mt-3 ml-4">
                 <div class="form-group d-flex">
-                    <div class="mr-3">
-                        <label for="semester">Semester:</label>
+                    <div class="mr-3 float-left">
+                        <label for="semester"></label>
                         <select name="semester" id="semester" class="selectpicker" data-style="btn-outline-primary">
                             <option value="1" @if ($semester==1) selected @endif>Semester 1</option>
                             <option value="2" @if ($semester==2) selected @endif>Semester 2</option>
+                            <option value="all" @if($semester=="all" ) selected @endif>All</option>
                         </select>
                     </div>
                     <div>
-                        <label for="year">Tahun:</label>
+                        <label for="year"></label>
                         <select name="year" id="year" class="selectpicker" data-style="btn-outline-primary">
                             <option value="" selected>Pilih Tahun</option>
                             @foreach ($uniqueYears as $uniqueYear)
@@ -48,7 +61,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="ml-auto mr-2">
+                    <div class="ml-auto mr-2 mt-2">
                         @if ($year)
                         <a href="{{ route('penangananjenis.export', ['semester' => $semester, 'year' => $year]) }}"
                             class="btn btn-outline-success btn-sm">Export to Excel</a>
@@ -57,23 +70,41 @@
                         <span class="text-danger ml-2">Pilih tahun terlebih dahulu.</span>
                         @endif
                     </div>
+                    <div class="float-left mr-2">
+                        <a href="{{ route('penangananjenis.petaall') }}" class="btn btn-outline-primary btn-sm">
+                            <div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="feather feather-map">
+                                    <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+                                    <line x1="8" y1="2" x2="8" y2="18"></line>
+                                    <line x1="16" y1="6" x2="16" y2="22"></line>
+                                </svg>
+                            </div>
+                        </a>
+                    </div>
                 </div>
             </form>
             <table id="zero-config" class="table table-striped" style="width:100%">
                 <thead>
                     <tr>
-                        <th>No</th>
+                        <th class="text-center">No</th>
                         <th class="text-center">Register Kawasan Konservasi</th>
+                        <th class="text-center">Resort</th>
                         <th class="text-center">Jenis Invasif</th>
                         <th class="text-center">Luas (Ha)</th>
-                        <th class="text-center" colspan="2">Koordinat Geografis (Decimal Degrees)</th>
-                        <th class="text-center"">Penanganan yang sudah dilakukan</th>
-                            <th class=" text-center">Rencana Penanganan</th>
+                        <th class="text-center" colspan="3">Koordinat Geografis (Decimal Degrees)</th>
+                        <th class="text-center">Penanganan yang sudah dilakukan</th>
+                        <th class="text-center">Rencana Penanganan</th>
                         <th class="text-center">Kemitraan yang dilakukan</th>
+                        <th class="text-center">Penambah Data</th>
                         <th class="text-center">Keterangan</th>
-                        <th>action</th>
+                        @if($semester !== 'all')
+                        <th class="text-center">Aksi</th>
+                        @endif
                     </tr>
                     <tr>
+                        <th></th>
                         <th></th>
                         <th></th>
                         <th>Nama Ilmiah</th>
@@ -85,6 +116,10 @@
                         <th></th>
                         <th></th>
                         <th></th>
+                        <th class="text-center"></th>
+                        @if($semester !== 'all')
+                        <th></th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -92,15 +127,38 @@
                     <tr>
                         <td class="text-center">{{ $loop->iteration }}</td>
                         <td class="text-center">{{ $item->no_register_kawasan }}</td>
-                        <td>{{ $item->ilmiah }}</td>
-                        <td>{{ $item->luas }}</td>
-                        <td>{{ $item->latitude }}</td>
-                        <td>{{ $item->longitude }}</td>
-                        <td>{{ $item->penanganan }}</td>
-                        <td>{{ $item->rencana }}</td>
-                        <td>{{ $item->kemitraan }}</td>
-                        <td>{{ $item->keterangan }}</td>
+                        <td class="text-center">
+                            @if ($item->user && $item->user->resort)
+                            {{ $item->user->resort->nama }}
+                            @else
+                            Unknown Resort
+                            @endif
+                        </td>
+                        <td class="text-center">{{ $item->ilmiah }}</td>
+                        <td class="text-center">{{ $item->luas }}</td>
+                        <td class="text-center">{{ $item->latitude }}</td>
+                        <td class="text-center">{{ $item->longitude }}</td>
                         <td>
+                            <a href="{{ route('penangananjenis.peta', ['semester' => $semester, 'id' => $item->id, 'latitude' => $item->latitude, 'longitude' => $item->longitude]) }}"
+                                class="btn btn-outline-primary btn-sm">
+                                <div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" class="feather feather-map">
+                                        <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+                                        <line x1="8" y1="2" x2="8" y2="18"></line>
+                                        <line x1="16" y1="6" x2="16" y2="22"></line>
+                                    </svg>
+                                </div>
+                            </a>
+                        </td>
+                        <td class="text-center">{{ $item->penanganan }}</td>
+                        <td class="text-center">{{ $item->rencana }}</td>
+                        <td class="text-center">{{ $item->kemitraan }}</td>
+                        <td class="text-center">{{ $item->user ? $item->user->nama_lengkap : 'Unknown User' }}</td>
+                        <td class="text-center">{{ $item->keterangan }}</td>
+                        @if($semester !== 'all')
+                        <td class="text-center">
                             <a href="{{ route('penangananjenis.edit', ['semester' => $semester, 'id' => $item->id]) }}"
                                 class="btn btn-outline-warning btn-sm">Edit</a>
                             <form
@@ -112,6 +170,7 @@
                                     onclick="return confirm('Yakin untuk menghapus data ini?')">Hapus</button>
                             </form>
                         </td>
+                        @endif
                     </tr>
                     @endforeach
                 </tbody>

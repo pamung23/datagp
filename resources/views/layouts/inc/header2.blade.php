@@ -11,7 +11,7 @@
     <ul class="navbar-nav flex-row">
         <li>
             <div class="page-header">
-                <span style="font-weight: bold;">{{ Auth::user()->level }}</span>
+                <span style="font-weight: bold;">{{ Auth::user()->nama_lengkap }}</span>
                 {{-- <nav class="breadcrumb-one" aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="javascript:void(0);">Dashboard</a></li>

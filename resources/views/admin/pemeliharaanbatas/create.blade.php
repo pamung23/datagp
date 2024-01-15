@@ -24,7 +24,8 @@
             <div class="statbox widget box box-shadow">
                 <div class="widget-header">
                     <div class="row">
-                        <div class="col-xl-12 col-md-12 col-sm-12 col-12">
+                        <div class="col-xl-12 col-md-12 col-sm-12 col-12 " style="margin-left: 12px;">
+                            <br>
                             <h3>Semester {{ $semester }}</h3>
                             <h4>Tambah Data Pemeliharaan Batas Kawasan Konservasi</h4>
                         </div>
@@ -47,40 +48,43 @@
                                 method="POST">
                                 @csrf
                                 <input type="hidden" name="semester" value="{{ $semester }}">
-                                <h6>Pemeliharaan Batas Kawasan Konservasi</h6>
                                 <div class="form-group">
                                     <label for="p_batas">Panjang Batas (KM)</label>
-                                    <input type="number" class="form-control" name="p_batas"
+                                    <input type="text" class="form-control" name="p_batas"
                                         placeholder="Masukkan Panjang Batas " required>
                                 </div>
                                 <div class="thick-hr"></div>
                                 <h6>Pelaksanaan Pemeliharaan Batas</h6>
                                 <div class="form-group">
                                     <label for="tahun">Tahun</label>
-                                    <input type="date" class="form-control" name="tahun" placeholder="Masukkan Tahun"
-                                        required>
+                                    <select class="form-control selectpicker" name="tahun" required>
+                                        <option value="">Pilih Tahun</option>
+                                        @foreach($years as $year)
+                                        <option value="{{ $year }}">{{ $year }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                                 <div class="form-group">
                                     <label for="panjang">Panjang (KM)</label>
-                                    <input type="number" class="form-control" name="panjang"
+                                    <input type="text" class="form-control" name="panjang"
                                         placeholder="Masukkan Panjang" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="jmlh_batas">Jumlah Pal Batas</label>
-                                    <input type="number" class="form-control" name="jmlh_batas"
+                                    <input type="text" class="form-control" name="jmlh_batas"
                                         placeholder="Masukkan Jumlah Pal Batas" required>
                                 </div>
                                 <div class="thick-hr"></div>
                                 <h6>Berita Acara/Laporan Pemeliharaan Batas</h6>
                                 <div class="form-group">
                                     <label for="nomor">Nomor</label>
-                                    <input type="number" class="form-control" name="nomor" placeholder="Masukkan Nomor"
+                                    <input type="text" class="form-control" name="nomor" placeholder="Masukkan Nomor"
                                         required>
                                 </div>
                                 <div class="form-group">
                                     <label for="tanggal">Tanggal</label>
-                                    <input type="date" class="form-control" name="tanggal"
-                                        placeholder="Masukkan Tanggal" required>
+                                    <input id="basicFlatpickr" class="form-control flatpickr flatpickr-input "
+                                        type="text" placeholder="Pilih Tanggal.." id="tanggal" name="tanggal" required>
                                 </div>
                                 <hr>
                                 <div class="form-group">

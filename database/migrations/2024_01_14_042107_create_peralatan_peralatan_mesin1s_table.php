@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('peralatan_transportasi2s', function (Blueprint $table) {
+        Schema::create('peralatan_peralatan_mesin1s', function (Blueprint $table) {
             $table->id();
             $table->integer('satker_id')->default('239807');
             $table->string('daops');
@@ -25,15 +25,30 @@ return new class extends Migration
             $table->integer('rusak4');
             $table->integer('baik5');
             $table->integer('rusak5');
-            $table->integer('lain1');
             $table->integer('baik6');
             $table->integer('rusak6');
             $table->integer('baik7');
             $table->integer('rusak7');
             $table->integer('baik8');
             $table->integer('rusak8');
-            $table->integer('lain2');
+            $table->integer('baik9');
+            $table->integer('rusak9');
+            $table->integer('baik10');
+            $table->integer('rusak10');
+            $table->integer('baik11');
+            $table->integer('rusak11');
+            $table->integer('baik12');
+            $table->integer('rusak12');
+            $table->integer('baik13');
+            $table->integer('rusak13');
+            $table->integer('baik14');
+            $table->integer('rusak14');
+            $table->integer('baik15');
+            $table->integer('rusak15');
+            $table->string('lain');
             $table->string('keterangan')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
             $table->timestamps();
         });
     }
@@ -43,6 +58,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('peralatan_transportasi2s');
+        Schema::dropIfExists('peralatan_peralatan_mesin1s');
     }
 };

@@ -39,6 +39,8 @@ return new class extends Migration
             $table->integer('baik12');
             $table->integer('rusak12');
             $table->string('keterangan')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
             $table->timestamps();
         });
     }

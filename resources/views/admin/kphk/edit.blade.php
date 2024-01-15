@@ -51,31 +51,23 @@
                                 <div class="form-group">
                                     <label for="nama">Nama KPHK</label>
                                     <input type="text" class="form-control" name="nama" placeholder="Masukkan nama KPHK"
-                                        required value="{{ $data->nama }}">
+                                        value="{{ $data->nama }}" required>
                                 </div>
-                                <div class="thick-hr"></div>
-                                <h6>SK Penetapan KPHK</h6>
                                 <div class="form-group">
                                     <label for="nomor">Nomor</label>
-                                    <input type="number" class="form-control" name="nomor" placeholder="Masukkan Nomor"
-                                        required value="{{ $data->nomor }}">
+                                    <input type="text" class="form-control" name="nomor" placeholder="Masukkan Nomor"
+                                        value="{{ $data->nomor }}" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="tanggal">Tanggal</label>
-                                    <input type="date" class="form-control" name="tanggal"
-                                        placeholder="Masukkan Tanggal" required value="{{ $data->tanggal }}">
+                                    <input id="basicFlatpickr" class="form-control flatpickr flatpickr-input"
+                                        type="text" placeholder="Pilih Tanggal.." id="tanggal" name="tanggal"
+                                        value="{{ $data->tanggal }}" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="luas">Luas (Ha)</label>
-                                    <input type="number" class="form-control" name="luas"
-                                        placeholder="Masukkan Luas (Ha)" required value="{{ $data->luas }}">
-                                </div>
-                                <div class="thick-hr"></div>
-                                <div class="form-group">
-                                    <label for="register">Register Kawasan Konservasi</label>
-                                    <input type="number" class="form-control" name="register"
-                                        placeholder="Masukkan Register Kawasan Konservasi" required
-                                        value="{{ $data->register }}">
+                                    <input type="text" class="form-control" name="luas" placeholder="Masukkan Luas (Ha)"
+                                        value="{{ $data->luas }}" required>
                                 </div>
                                 <hr>
                                 <div class="form-group">
@@ -83,8 +75,7 @@
                                     <textarea class="form-control" name="keterangan" rows="3"
                                         placeholder="Masukkan keterangan (Optional)">{{ $data->keterangan }}</textarea>
                                 </div>
-                                <button type="submit" class="btn btn-primary mt-4" id="submit-button">Simpan
-                                    Perubahan</button>
+                                <button type="submit" class="btn btn-primary mt-4" id="submit-button">Simpan</button>
                             </form>
                         </div>
                     </div>

@@ -11,19 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('perubahan_fungsikk1s', function (Blueprint $table) {
+        Schema::create('perubahan_fungsikk2s', function (Blueprint $table) {
             $table->id();
             $table->integer('no_register_kawasan')->default('100242015');
-            $table->integer('nomor1');
+            $table->string('nomor1');
             $table->date('tanggal1');
-            $table->integer('luas1');
-            $table->integer('nomor2');
+            $table->string('luas1');
+            $table->string('nomor2');
             $table->date('tanggal2');
-            $table->integer('luas2');
+            $table->string('luas2');
             $table->string('fungsi');
             $table->string('nama');
-            $table->integer('luas3');
-            $table->string('keterangan')->nullable();
+            $table->string('luas3');
+            $table->text('keterangan')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
             $table->timestamps();
         });
     }
@@ -33,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('perubahan_fungsikk1s');
+        Schema::dropIfExists('perubahan_fungsikk2s');
     }
 };

@@ -40,26 +40,60 @@ class KerjasamaController extends Controller
     public function index(Request $request)
     {
         $semester = $request->input('semester', 1);
-        $year = $request->input('year'); // Get the selected year from the request
+        $year = $request->input('year');
+        $modelsToQuery = [];
 
-        $model = $this->modelMapping[$semester] ?? kerjasama1::class;
+        // Ambil level pengguna saat ini
+        $userLevel = auth()->user()->level;
 
-        // Fetch data based on the selected year (if provided)
-        $query = $model::query();
+        // Inisialisasi array level yang diizinkan mengakses semua triwulan
+        $levelsAllowedForAllsemester = ['Admin', 'Balai'];
 
-        if ($year) {
-            $query->whereYear('created_at', $year);
+        if (in_array($userLevel, $levelsAllowedForAllsemester)) {
+            // Jika level pengguna adalah 'Admin' atau 'Balai', perbolehkan akses ke semua triwulan
+            foreach ($this->modelMapping as $model) {
+                $modelsToQuery[] = new $model;
+            }
+        } elseif (in_array($userLevel, ['Wilayah Cianjur', 'Wilayah Sukabumi', 'Wilayah Bogor'])) {
+            // Jika level pengguna adalah 'Wilayah Cianjur', 'Wilayah Sukabumi', atau 'Wilayah Bogor',
+            // batasi akses hanya ke triwulan yang dipilih dan resort yang sesuai
+            $model = $this->modelMapping[$semester] ?? kerjasama1::class;
+            $modelsToQuery[] = new $model;
         }
 
-        $kerjasama = $query->get();
+        $kerjasama = collect();
 
-        // Fetch the unique years from the selected model
-        $uniqueYears = $model::selectRaw('YEAR(created_at) as year')
-            ->distinct()
-            ->orderBy('year', 'desc')
-            ->pluck('year');
+        foreach ($modelsToQuery as $model) {
+            $query = $model::query()->with('user.resort');
 
-        // Function to convert English month to Indonesian
+            if ($year) {
+                $query->whereYear('created_at', $year);
+            }
+
+            // Jika level pengguna adalah 'Wilayah Cianjur', 'Wilayah Sukabumi', atau 'Wilayah Bogor',
+            // tambahkan kondisi untuk membatasi berdasarkan resort
+            if (in_array($userLevel, ['Wilayah Cianjur', 'Wilayah Sukabumi', 'Wilayah Bogor'])) {
+                $query->whereHas('user.resort', function ($subquery) use ($userLevel) {
+                    $subquery->where('nama', auth()->user()->resort->nama);
+                });
+            }
+
+            $kerjasama = $kerjasama->merge($query->get());
+        }
+
+        $uniqueYears = collect();
+
+        foreach ($modelsToQuery as $model) {
+            $years = $model::selectRaw('YEAR(created_at) as year')
+                ->distinct()
+                ->orderBy('year', 'desc')
+                ->pluck('year');
+
+            $uniqueYears = $uniqueYears->merge($years);
+        }
+
+        // Filter out duplicates and sort the unique years
+        $uniqueYears = $uniqueYears->unique()->sort()->reverse();
         function getMonthInBahasa($englishMonth)
         {
             $months = [
@@ -79,7 +113,6 @@ class KerjasamaController extends Controller
 
             return $months[$englishMonth];
         }
-
         $kerjasama = $kerjasama->map(function ($item) {
             $item->tanggal_mou = $item->tanggal_mou ? Carbon::parse($item->tanggal_mou)->translatedFormat('d F Y') : '';
             $item->tanggal_awal_berlaku = $item->tanggal_awal_berlaku ? Carbon::parse($item->tanggal_awal_berlaku)->translatedFormat('d F Y') : '';

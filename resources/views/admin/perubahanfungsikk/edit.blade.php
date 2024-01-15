@@ -51,53 +51,55 @@
                                 <h6>Penunjukan/Penetapan Awal</h6>
                                 <div class="form-group">
                                     <label for="nomor1">Nomor SK</label>
-                                    <input type="number" class="form-control" name="nomor1"
-                                        placeholder="Masukkan Nomor SK" required value="{{ $data->nomor1 }}">
+                                    <input type="text" class="form-control" name="nomor1"
+                                        placeholder="Masukkan Nomor SK" value="{{ $data->nomor1 }}" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="tanggal1">Tanggal SK</label>
-                                    <input type="date" class="form-control" name="tanggal1"
-                                        placeholder="Masukkan Tanggal SK" required value="{{ $data->tanggal1 }}">
+                                    <input id="basicFlatpickr" class="form-control flatpickr flatpickr-input"
+                                        type="text" placeholder="Pilih Tanggal.." id="tanggal1" name="tanggal1"
+                                        value="{{ date('d/m/Y', strtotime($data->tanggal1)) }}" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="luas1">Luas (Ha)</label>
-                                    <input type="number" class="form-control" name="luas1"
-                                        placeholder="Masukkan Luas (Ha)" required value="{{ $data->luas1 }}">
+                                    <input type="text" class="form-control" name="luas1"
+                                        placeholder="Masukkan Luas (Ha)" value="{{ $data->luas1 }}" required>
                                 </div>
                                 <div class="thick-hr"></div>
                                 <h6>Perubahan Fungsi/Peruntukan</h6>
                                 <div class="form-group">
                                     <label for="nomor2">Nomor SK</label>
-                                    <input type="number" class="form-control" name="nomor2"
-                                        placeholder="Masukkan Nomor SK" required value="{{ $data->nomor2 }}">
+                                    <input type="text" class="form-control" name="nomor2"
+                                        placeholder="Masukkan Nomor SK" value="{{ $data->nomor2 }}" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="tanggal2">Tanggal SK</label>
-                                    <input type="date" class="form-control" name="tanggal2"
-                                        placeholder="Masukkan Tanggal SK" required value="{{ $data->tanggal2 }}">
+                                    <input id="basicFlatpickr1" class="form-control flatpickr flatpickr-input"
+                                        type="text" placeholder="Pilih Tanggal.." id="tanggal2" name="tanggal2"
+                                        value="{{ date('d/m/Y', strtotime($data->tanggal2)) }}" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="luas2">Luas (Ha)</label>
-                                    <input type="number" class="form-control" name="luas2"
-                                        placeholder="Masukkan Luas (Ha)" required value="{{ $data->luas2 }}">
+                                    <input type="tesxt" class="form-control" name="luas2"
+                                        placeholder="Masukkan Luas (Ha)" value="{{ $data->luas2 }}" required>
                                 </div>
                                 <div class="thick-hr"></div>
                                 <h6>Kondisi Akhir</h6>
                                 <div class="form-group">
                                     <label for="fungsi">Fungsi Kawasan</label>
                                     <input type="text" class="form-control" name="fungsi"
-                                        placeholder="Masukkan Fungsi Kawasan" required value="{{ $data->fungsi }}">
+                                        placeholder="Masukkan Fungsi Kawasan" value="{{ $data->fungsi }}" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="nama">Nama Kawasan Konservasi</label>
                                     <input type="text" class="form-control" name="nama"
-                                        placeholder="Masukkan Nama Kawasan Konservasi" required
-                                        value="{{ $data->nama }}">
+                                        placeholder="Masukkan Nama Kawasan Konservasi" value="{{ $data->nama }}"
+                                        required>
                                 </div>
                                 <div class="form-group">
                                     <label for="luas3">Luas (Ha)</label>
-                                    <input type="number" class="form-control" name="luas3"
-                                        placeholder="Masukkan Luas (Ha)" required value="{{ $data->luas3 }}">
+                                    <input type="text" class="form-control" name="luas3"
+                                        placeholder="Masukkan Luas (Ha)" value="{{ $data->luas3 }}" required>
                                 </div>
                                 <hr>
                                 <div class="form-group">
@@ -105,6 +107,7 @@
                                     <textarea class="form-control" name="keterangan" rows="3"
                                         placeholder="Masukkan keterangan (Optional)">{{ $data->keterangan }}</textarea>
                                 </div>
+
                                 <button type="submit" class="btn btn-primary mt-4" id="submit-button">Simpan
                                     Perubahan</button>
                             </form>
@@ -123,4 +126,9 @@
 <script src="{{ asset('plugins/select2/custom-select2.js') }}"></script>
 <script src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
 <script src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
+<script>
+    var f1 = flatpickr(document.getElementById('basicFlatpickr1'));
+    var f1 = flatpickr(document.getElementById('basicFlatpickr2'));
+    var f1 = flatpickr(document.getElementById('basicFlatpickr3'));
+</script>
 @endpush

@@ -24,7 +24,8 @@
             <div class="statbox widget box box-shadow">
                 <div class="widget-header">
                     <div class="row">
-                        <div class="col-xl-12 col-md-12 col-sm-12 col-12">
+                        <div class="col-xl-12 col-md-12 col-sm-12 col-12 " style="margin-left: 12px;">
+                            <br>
                             <h3>Semester {{ $semester }}</h3>
                             <h4>Tambah Data Hasil Evaluasi Kesesuaian Fungsi Kawasan Konservasi
                             </h4>
@@ -47,11 +48,10 @@
                             <form action="{{ route('hasilevaluasi.store', ['semester' => $semester]) }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="semester" value="{{ $semester }}">
-                                <h6>Hasil Evaluasi Kesesuaian Fungsi Kawasan Konservasi</h6>
                                 <div class="form-group">
                                     <label for="tanggal">Tanggal EKF</label>
-                                    <input type="date" class="form-control" name="tanggal"
-                                        placeholder="Masukkan Tanggal EKF " required>
+                                    <input id="basicFlatpickr" class="form-control flatpickr flatpickr-input "
+                                        type="text" placeholder="Pilih Tanggal.." id="tanggal" name="tanggal" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="rekomendasi">Rekomendasi EKF</label>

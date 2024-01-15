@@ -90,17 +90,18 @@ class ZonasiController extends Controller
 
     public function exportToExcel(Request $request)
     {
-        $semester = $request->query('semester', null);
-        $year = $request->query('year', null);
+        $semester = $request->get('semester');
+        $year = $request->get('year');
 
-        if ($year && $semester) {
-            return Excel::download(new ZonasiExport($semester, $year), 'zonasi_semester_' . $semester . '_tahun_' . $year . '.xlsx');
-        } elseif ($semester) {
-            return Excel::download(new ZonasiExport($semester, null), 'zonasi_semester_' . $semester . '.xlsx');
+        if ($semester === 'all') {
+            $fileName = 'Penataan Kawasan Konservasi ALL semester ' . $year . '.xlsx';
+        } elseif (in_array($semester, [1, 2, 3, 4])) {
+            $fileName = 'Penataan Kawasan Konservasi semester ' . $semester . ' ' . $year . '.xlsx';
         } else {
-            // Redirect to a default page if neither year nor semester is selected
-            return redirect()->route('zonasi.index'); // Replace with your desired default route
+            return redirect()->back()->with('error', 'Invalid Semester selected for export.');
         }
+
+        return (new ZonasiExport($semester, $year))->download($fileName);
     }
 
 
@@ -233,7 +234,7 @@ class ZonasiController extends Controller
 
     public function destroy($semester, $id)
     {
-        $model = $this->modelMapping[$semester] ?? zonasi1s::class;
+        $model = $this->modelMapping[$semester] ?? zonasi1::class;
 
         // Temukan data yang akan dihapus berdasarkan ID
         $dataToDelete = $model::findOrFail($id);

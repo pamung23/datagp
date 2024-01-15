@@ -19,27 +19,39 @@
         <div class="widget-header">
             <div class="row py-2 m-auto">
                 <div class="col-xl-6 col-md-6 col-sm-6 col-6">
-
                     <h4>Sarana Pengamanan Hutan</h4>
                 </div>
+                @if($semester !== 'all')
                 <div class="col-xl-6 col-md-6 col-sm-6 col-6 text-right m-auto">
                     <a href="{{ route('saranapengamatan.create', ['semester' => $semester]) }}"
                         class="btn btn-outline-primary btn-sm">Tambah Data</a>
                 </div>
+                @endif
             </div>
         </div>
+        @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+        @endif
+        @if(session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+        @endif
         <div class="widget-content widget-content-area br-6">
             <form action="{{ route('saranapengamatan.index') }}" method="GET" class="mb-4 mt-3 ml-4">
                 <div class="form-group d-flex">
-                    <div class="mr-3">
-                        <label for="semester">Semester:</label>
+                    <div class="mr-3 float-left">
+                        <label for="semester"></label>
                         <select name="semester" id="semester" class="selectpicker" data-style="btn-outline-primary">
                             <option value="1" @if ($semester==1) selected @endif>Semester 1</option>
                             <option value="2" @if ($semester==2) selected @endif>Semester 2</option>
+                            <option value="all" @if($semester=="all" ) selected @endif>All</option>
                         </select>
                     </div>
                     <div>
-                        <label for="year">Tahun:</label>
+                        <label for="year"></label>
                         <select name="year" id="year" class="selectpicker" data-style="btn-outline-primary">
                             <option value="" selected>Pilih Tahun</option>
                             @foreach ($uniqueYears as $uniqueYear)
@@ -49,7 +61,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="ml-auto mr-2">
+                    <div class="ml-auto mr-2 mt-2">
                         @if ($year)
                         <a href="{{ route('saranapengamatan.export', ['semester' => $semester, 'year' => $year]) }}"
                             class="btn btn-outline-success btn-sm">Export to Excel</a>
@@ -65,10 +77,13 @@
                     <tr>
                         <th>No</th>
                         <th class="text-center">Satuan Kerja (Satker ID)</th>
+                        <th class="text-center">Resort</th>
                         <th class="text-center" colspan="14">Jenjang Pendidikan</th>
+                        <th class="text-center">Penambah Data</th>
                         <th class="text-center">Keterangan</th>
-                        <th>action</th>
-
+                        @if($semester !== 'all')
+                        <th>Aksi</th>
+                        @endif
                     </tr>
                     <tr>
                         <th></th>
@@ -76,9 +91,15 @@
                         <th class="text-center" colspan="4">Senjata Api (buah)</th>
                         <th class="text-center" colspan="6">Alat Transportasi (unit)</th>
                         <th class="text-center" colspan="4">Alat Komunikasi (unit)</th>
-
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        @if($semester !== 'all')
+                        <th></th>
+                        @endif
                     <tr>
                     <tr>
+                        <th></th>
                         <th></th>
                         <th></th>
                         <th class="text-center">Genggam</th>
@@ -95,6 +116,11 @@
                         <th class="text-center">HT</th>
                         <th class="text-center">SSB</th>
                         <th class="text-center">Lain-Lain</th>
+                        <th></th>
+                        <th></th>
+                        @if($semester !== 'all')
+                        <th></th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -102,6 +128,13 @@
                     <tr>
                         <td class="text-center">{{ $loop->iteration }}</td>
                         <td class="text-center">{{ $item->satker_id }}</td>
+                        <td class="text-center">
+                            @if ($item->user && $item->user->resort)
+                            {{ $item->user->resort->nama }}
+                            @else
+                            Unknown Resort
+                            @endif
+                        </td>
                         <td>{{ $item->genggam }}</td>
                         <td>{{ $item->laras_panjang }}</td>
                         <td>{{ $item->senjata_bius }}</td>
@@ -116,8 +149,10 @@
                         <td>{{ $item->ht }}</td>
                         <td>{{ $item->ssb }}</td>
                         <td>{{ $item->lain3 }}</td>
-                        <td>{{ $item->keterangan }}</td>
-                        <td>
+                        <td class="text-center">{{ $item->user ? $item->user->nama_lengkap : 'Unknown User' }}</td>
+                        <td class="text-center">{{ $item->keterangan }}</td>
+                        @if($semester !== 'all')
+                        <td class="text-center">
                             <a href="{{ route('saranapengamatan.edit', ['semester' => $semester, 'id' => $item->id]) }}"
                                 class="btn btn-outline-warning btn-sm" class="text-center">Edit</a>
                             <form
@@ -130,6 +165,7 @@
                                     class="text-center">Hapus</button>
                             </form>
                         </td>
+                        @endif
                     </tr>
                     @endforeach
                 </tbody>

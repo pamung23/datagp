@@ -11,13 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('hasil_evaluasi1s', function (Blueprint $table) {
+        Schema::create('pemeliharaan_batas2s', function (Blueprint $table) {
             $table->id();
             $table->integer('no_register_kawasan')->default('100242015');
+            $table->string('p_batas');
+            $table->string('tahun');
+            $table->string('panjang');
+            $table->string('jmlh_batas');
+            $table->string('nomor');
             $table->date('tanggal');
-            $table->string('rekomendasi');
-            $table->string('tindak');
             $table->text('keterangan')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
             $table->timestamps();
         });
     }
@@ -27,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('hasil_evaluasi1s');
+        Schema::dropIfExists('pemeliharaan_batas2s');
     }
 };

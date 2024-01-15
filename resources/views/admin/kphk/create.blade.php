@@ -52,28 +52,20 @@
                                     <input type="text" class="form-control" name="nama" placeholder="Masukkan nama KPHK"
                                         required>
                                 </div>
-                                <div class="thick-hr"></div>
-                                <h6>SK Penetapan KPHK</h6>
                                 <div class="form-group">
                                     <label for="nomor">Nomor</label>
-                                    <input type="number" class="form-control" name="nomor" placeholder="Masukkan Nomor"
+                                    <input type="text" class="form-control" name="nomor" placeholder="Masukkan Nomor"
                                         required>
                                 </div>
                                 <div class="form-group">
                                     <label for="tanggal">Tanggal</label>
-                                    <input type="date" class="form-control" name="tanggal"
-                                        placeholder="Masukkan Tanggal" required>
+                                    <input id="basicFlatpickr" class="form-control flatpickr flatpickr-input "
+                                        type="text" placeholder="Pilih Tanggal.." id="tanggal" name="tanggal" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="luas">Luas (Ha)</label>
-                                    <input type="number" class="form-control" name="luas"
-                                        placeholder="Masukkan Luas (Ha)" required>
-                                </div>
-                                <div class="thick-hr"></div>
-                                <div class="form-group">
-                                    <label for="register">Register Kawasan Konservasi</label>
-                                    <input type="number" class="form-control" name="register"
-                                        placeholder="Masukkan Register Kawasan Konservasi" required>
+                                    <input type="text" class="form-control" name="luas" placeholder="Masukkan Luas (Ha)"
+                                        required>
                                 </div>
                                 <hr>
                                 <div class="form-group">

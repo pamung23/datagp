@@ -2,9 +2,11 @@
 
 namespace App\Exports;
 
+use Illuminate\Support\Carbon;
 use App\Models\perubahan_fungsikk1;
 use App\Models\perubahan_fungsikk2;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -12,12 +14,14 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
+
 class PerubahanFungsikkExport implements FromCollection, WithHeadings, WithStyles, WithMapping
 {
     use Exportable;
 
     protected $semester;
     protected $year;
+    private $currentIndex = 0;
 
     public function __construct($semester, $year)
     {
@@ -40,37 +44,73 @@ class PerubahanFungsikkExport implements FromCollection, WithHeadings, WithStyle
      */
     public function collection()
     {
-        // Ambil nama kelas model yang sesuai berdasarkan semester
-        $modelClass = $this->getModelForSemester($this->semester);
+        $user = Auth::user();
 
-        if (!$modelClass) {
-            return collect(); // Return empty collection jika model tidak ditemukan
+        if ($this->semester === 'all') {
+            $data = collect();
+
+            for ($i = 1; $i <= 4; $i++) {
+                $modelClass = $this->getModelForSemester($i);
+
+                if (!$modelClass) {
+                    continue;
+                }
+
+                $model = new $modelClass();
+
+                $query = $model->query();
+
+                if ($this->year) {
+                    $query->whereYear('created_at', $this->year);
+                }
+
+                // Filter berdasarkan resort pengguna untuk level 'Wilayah'
+                if (in_array($user->level, ['Wilayah Cianjur', 'Wilayah Sukabumi', 'Wilayah Bogor'])) {
+                    $query->whereHas('user.resort', function ($subquery) use ($user) {
+                        $subquery->where('id', $user->resort_id);
+                    });
+                }
+
+                $semesterData = $query->get();
+
+                $semesterData->each(function ($item) use ($i) {
+                    $item->semester = $i;
+                });
+
+                $data = $data->merge($semesterData);
+            }
+
+            return $data;
+        } else {
+            $modelClass = $this->getModelForSemester($this->semester);
+
+            if (!$modelClass) {
+                return collect();
+            }
+
+            $model = new $modelClass();
+
+            $query = $model->query();
+
+            if ($this->year) {
+                $query->whereYear('created_at', $this->year);
+            }
+
+            // Filter berdasarkan resort pengguna untuk level 'Wilayah'
+            if (in_array($user->level, ['Wilayah Cianjur', 'Wilayah Sukabumi', 'Wilayah Bogor'])) {
+                $query->whereHas('user.resort', function ($subquery) use ($user) {
+                    $subquery->where('id', $user->resort_id);
+                });
+            }
+
+            $semesterData = $query->get();
+
+            $semesterData->each(function ($item) {
+                $item->semester = $this->semester;
+            });
+
+            return $semesterData;
         }
-
-        // Buat instance model berdasarkan kelas
-        $model = new $modelClass();
-
-        // Query dan ambil data sesuai dengan model dan tahun yang dipilih
-        $query = $model->query();
-
-        if ($this->year) {
-            $query->whereYear('created_at', $this->year);
-        }
-
-        $data = $query->get();
-
-        // Tambahkan nomor urut pada setiap baris
-        $data->each(function ($item, $key) {
-            $item->nomor_urut = $key + 1;
-        });
-
-        // Ubah data menjadi koleksi
-        $collection = collect($data);
-
-        // Debugging: Log data to check if it's retrieved correctly
-        Log::info('Data retrieved:', $collection->toArray());
-
-        return $collection;
     }
 
     public function headings(): array
@@ -124,15 +164,18 @@ class PerubahanFungsikkExport implements FromCollection, WithHeadings, WithStyle
 
     public function map($row): array
     {
+        $tanggal1 = Carbon::createFromFormat('Y-m-d', $row->tanggal1)->format('d/m/Y');
+        $tanggal2 = Carbon::createFromFormat('Y-m-d', $row->tanggal2)->format('d/m/Y');
+        $this->currentIndex++;
         return [
             '',
-            $row->nomor_urut,
+            $this->currentIndex,
             $row->no_register_kawasan,
             $row->nomor1,
-            $row->tanggal1,
+            $tanggal1,
             $row->luas1,
             $row->nomor2,
-            $row->tanggal2,
+            $tanggal2,
             $row->luas2,
             $row->fungsi,
             $row->nama,
