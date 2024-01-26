@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('fungsional_sex1s', function (Blueprint $table) {
+        Schema::create('fungsional_sex2s', function (Blueprint $table) {
             $table->id();
             $table->integer('satker_id')->default('36');
             $table->integer('laki_peh');
@@ -35,7 +35,9 @@ return new class extends Migration
             $table->integer('laki_jumlah');
             $table->integer('perempuan_jumlah');
             $table->integer('total');
-            $table->string('keterangan')->nullable();
+            $table->text('keterangan')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
             $table->timestamps();
         });
     }
@@ -45,6 +47,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('fungsional_sex1s');
+        Schema::dropIfExists('fungsional_sex2s');
     }
 };

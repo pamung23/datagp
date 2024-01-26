@@ -21,24 +21,37 @@
                 <div class="col-xl-6 col-md-6 col-sm-6 col-6">
                     <h4>kerjasama Kawasan Konservasi</h4>
                 </div>
+                @if($semester !== 'all')
                 <div class="col-xl-6 col-md-6 col-sm-6 col-6 text-right m-auto">
                     <a href="{{ route('kerjasama.create', ['semester' => $semester]) }}"
                         class="btn btn-outline-primary btn-sm">Tambah Data</a>
                 </div>
+                @endif
             </div>
         </div>
+        @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+        @endif
+        @if(session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+        @endif
         <div class="widget-content widget-content-area br-6">
             <form action="{{ route('kerjasama.index') }}" method="GET" class="mb-4 mt-3 ml-4">
                 <div class="form-group d-flex">
-                    <div class="mr-3">
-                        <label for="semester">Semester:</label>
+                    <div class="mr-3 float-left">
+                        <label for="semester"></label>
                         <select name="semester" id="semester" class="selectpicker" data-style="btn-outline-primary">
                             <option value="1" @if ($semester==1) selected @endif>Semester 1</option>
                             <option value="2" @if ($semester==2) selected @endif>Semester 2</option>
+                            <option value="all" @if($semester=="all" ) selected @endif>All</option>
                         </select>
                     </div>
                     <div>
-                        <label for="year">Tahun:</label>
+                        <label for="year"></label>
                         <select name="year" id="year" class="selectpicker" data-style="btn-outline-primary">
                             <option value="" selected>Pilih Tahun</option>
                             @foreach ($uniqueYears as $uniqueYear)
@@ -48,7 +61,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="ml-auto mr-2">
+                    <div class="ml-auto mr-2 mt-2">
                         @if ($year)
                         <a href="{{ route('kerjasama.export', ['semester' => $semester, 'year' => $year]) }}"
                             class="btn btn-outline-success btn-sm">Export to Excel</a>
@@ -64,6 +77,7 @@
                     <tr>
                         <th>No</th>
                         <th class="text-center">Register Kawasan Konservasi</th>
+                        <th class="text-center">Resort</th>
                         <th class="text-center">Tipe Kerjasama</th>
                         <th class="text-center">kerjasama Kawasan Konservasi</th>
                         <th class="text-center">kerjasama Kawasan Konservasi</th>
@@ -72,8 +86,11 @@
                         <th class="text-center">kerjasama Kawasan Konservasi</th>
                         <th class="text-center">kerjasama Kawasan Konservasi</th>
                         <th class="text-center">kerjasama Kawasan Konservasi</th>
+                        <th class="text-center">Penambah Data</th>
                         <th class="text-center">Keterangan</th>
-                        <th>action</th>
+                        @if($semester !== 'all')
+                        <th>Aksi</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -81,6 +98,13 @@
                     <tr>
                         <td class="text-center">{{ $loop->iteration }}</td>
                         <td class="text-center">{{ $item->no_register_kawasan }}</td>
+                        <td class="text-center">
+                            @if ($item->user && $item->user->resort)
+                            {{ $item->user->resort->nama }}
+                            @else
+                            Unknown Resort
+                            @endif
+                        </td>
                         <td class="text-center">{{ $item->tipe_kerjasama }}</td>
                         <td class="text-center">{{ $item->mitra_kerjasama }}</td>
                         <td class="text-center">{{ $item->judul_kerjasama }}</td>
@@ -89,7 +113,9 @@
                         <td>{{ $item->tanggal_mou }}</td>
                         <td>{{ $item->tanggal_awal_berlaku }}</td>
                         <td>{{ $item->tanggal_akhir_berlaku }}</td>
-                        <td>{{ $item->keterangan }}</td>
+                        <td class="text-center">{{ $item->user ? $item->user->nama_lengkap : 'Unknown User' }}</td>
+                        <td class="text-center">{{ $item->keterangan }}</td>
+                        @if($semester !== 'all')
                         <td>
                             <a href="{{ route('kerjasama.edit', ['semester' => $semester, 'id' => $item->id]) }}"
                                 class="btn btn-outline-warning btn-sm">Edit</a>
@@ -102,6 +128,7 @@
                                     onclick="return confirm('Yakin untuk menghapus data ini?')">Hapus</button>
                             </form>
                         </td>
+                        @endif
                     </tr>
                     @endforeach
                 </tbody>

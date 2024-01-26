@@ -25,7 +25,8 @@
             <div class="statbox widget box box-shadow">
                 <div class="widget-header">
                     <div class="row">
-                        <div class="col-xl-12 col-md-12 col-sm-12 col-12">
+                        <div class="col-xl-12 col-md-12 col-sm-12 col-12 " style="margin-left: 12px;">
+                            <br>
                             <h3>Semester {{ $semester }}</h3>
                             <h4>Tambah Data Sebaran PNS/CPNS Menurut Tingkat Pendidikan dan Jenis Kelamin</h4>
                         </div>
@@ -51,105 +52,103 @@
 
                                 <h6>Doktor</h6>
                                 <div class="form-group">
-                                    <label for="laki_doktor">Laki Doktor</label>
+                                    <label for="laki_doktor">Laki-laki</label>
                                     <input type="number" class="form-control" name="laki_doktor"
-                                        placeholder="Masukkan Laki Doktor" required>
+                                        placeholder="Masukkan Laki-laki" required oninput="hitungTotal()">
                                 </div>
                                 <div class="form-group">
-                                    <label for="perempuan_doktor">Perempuan Doktor</label>
+                                    <label for="perempuan_doktor">Perempuan</label>
                                     <input type="number" class="form-control" name="perempuan_doktor"
-                                        placeholder="Masukkan Perempuan Doktor" required>
+                                        placeholder="Masukkan Perempuan" required oninput="hitungTotal()">
                                 </div>
                                 <div class="thick-hr"></div>
                                 <h6>Master</h6>
                                 <div class="form-group">
-                                    <label for="laki_master">Laki Master</label>
+                                    <label for="laki_master">Laki-laki</label>
                                     <input type="number" class="form-control" name="laki_master"
-                                        placeholder="Masukkan Laki Master" required>
+                                        placeholder="Masukkan Laki-laki" required oninput="hitungTotal()">
                                 </div>
                                 <div class="form-group">
-                                    <label for="perempuan_master">Perempuan Master</label>
+                                    <label for="perempuan_master">Perempuan</label>
                                     <input type="number" class="form-control" name="perempuan_master"
-                                        placeholder="Masukkan Perempuan Master" required>
+                                        placeholder="Masukkan Perempuan" required oninput="hitungTotal()">
                                 </div>
                                 <div class="thick-hr"></div>
                                 <h6>Sarjana</h6>
                                 <div class="form-group">
-                                    <label for="laki_sarjana">Laki Sarjana</label>
+                                    <label for="laki_sarjana">Laki-laki</label>
                                     <input type="number" class="form-control" name="laki_sarjana"
-                                        placeholder="Masukkan Laki Sarjana" required>
+                                        placeholder="Masukkan Laki-laki" required oninput="hitungTotal()">
                                 </div>
                                 <div class="form-group">
-                                    <label for="perempuan_sarjana">Perempuan Sarjana</label>
+                                    <label for="perempuan_sarjana">Perempuan</label>
                                     <input type="number" class="form-control" name="perempuan_sarjana"
-                                        placeholder="Masukkan Perempuan Sarjana" required>
+                                        placeholder="Masukkan Perempuan" required oninput="hitungTotal()">
                                 </div>
                                 <div class="thick-hr"></div>
                                 <h6>Sarjana Muda</h6>
                                 <div class="form-group">
-                                    <label for="laki_sarjana_muda">Laki Sarjana Muda</label>
+                                    <label for="laki_sarjana_muda">Laki-laki</label>
                                     <input type="number" class="form-control" name="laki_sarjana_muda"
-                                        placeholder="Masukkan Laki Sarjana Muda" required>
+                                        placeholder="Masukkan Laki-laki" required oninput="hitungTotal()">
                                 </div>
                                 <div class="form-group">
-                                    <label for="perempuan_sarjana_muda">Perempuan Sarjana Muda</label>
+                                    <label for="perempuan_sarjana_muda">Perempuan</label>
                                     <input type="number" class="form-control" name="perempuan_sarjana_muda"
-                                        placeholder="Masukkan Perempuan Sarjana Muda" required>
+                                        placeholder="Masukkan Perempuan" required oninput="hitungTotal()">
                                 </div>
                                 <div class="thick-hr"></div>
                                 <h6>SLTA</h6>
                                 <div class="form-group">
-                                    <label for="laki_slta">Laki SLTA</label>
+                                    <label for="laki_slta">Laki-laki</label>
                                     <input type="number" class="form-control" name="laki_slta"
-                                        placeholder="Masukkan Laki SLTA" required>
+                                        placeholder="Masukkan Laki-laki" required oninput="hitungTotal()">
                                 </div>
                                 <div class="form-group">
-                                    <label for="perempuan_SLTA">Perempuan SLTA</label>
+                                    <label for="perempuan_SLTA">Perempuan</label>
                                     <input type="number" class="form-control" name="perempuan_slta"
-                                        placeholder="Masukkan Perempuan SLTA" required>
+                                        placeholder="Masukkan Perempuan" required oninput="hitungTotal()">
                                 </div>
                                 <div class="thick-hr"></div>
                                 <h6>SLTP</h6>
                                 <div class="form-group">
-                                    <label for="laki_sltp">Laki SLTP</label>
+                                    <label for="laki_sltp">Laki-laki</label>
                                     <input type="number" class="form-control" name="laki_sltp"
-                                        placeholder="Masukkan Laki SLTP" required>
+                                        placeholder="Masukkan Laki-laki" required oninput="hitungTotal()">
                                 </div>
                                 <div class="form-group">
-                                    <label for="perempuan_sltp">Perempuan SLTP</label>
+                                    <label for="perempuan_sltp">Perempuan</label>
                                     <input type="number" class="form-control" name="perempuan_sltp"
-                                        placeholder="Masukkan Perempuan SLTP" required>
+                                        placeholder="Masukkan Perempuan" required oninput="hitungTotal()">
                                 </div>
                                 <div class="thick-hr"></div>
                                 <h6>SD</h6>
                                 <div class="form-group">
-                                    <label for="laki_sd">Laki SD</label>
+                                    <label for="laki_sd">Laki-laki</label>
                                     <input type="number" class="form-control" name="laki_sd"
-                                        placeholder="Masukkan Laki SD" required>
+                                        placeholder="Masukkan Laki-laki" required oninput="hitungTotal()">
                                 </div>
                                 <div class="form-group">
-                                    <label for="perempuan_sd">Perempuan SD</label>
+                                    <label for="perempuan_sd">Perempuan</label>
                                     <input type="number" class="form-control" name="perempuan_sd"
-                                        placeholder="Masukkan Perempuan SD" required>
+                                        placeholder="Masukkan Perempuan" required oninput="hitungTotal()">
                                 </div>
                                 <div class="thick-hr"></div>
                                 <h6>Jumlah</h6>
                                 <div class="form-group">
-                                    <label for="laki_jumlah">Laki Jumlah</label>
-                                    <input type="number" class="form-control" name="laki_jumlah"
-                                        placeholder="Masukkan Laki Jumlah" required>
+                                    <label for="laki_jumlah">Laki-Laki</label>
+                                    <input type="number" class="form-control" name="laki_jumlah" oninput="hitungTotal()"
+                                        readonly>
                                 </div>
                                 <div class="form-group">
-                                    <label for="perempuan_jumlah">Perempuan Jumlah</label>
+                                    <label for="perempuan_jumlah">Perempuan</label>
                                     <input type="number" class="form-control" name="perempuan_jumlah"
-                                        placeholder="Masukkan Perempuan Jumlah" required>
+                                        oninput="hitungTotal()" readonly>
                                 </div>
-                                <div class="thick-hr"></div>
-                                <h6>Total</h6>
                                 <div class="form-group">
                                     <label for="total">Total</label>
-                                    <input type="number" class="form-control" name="total" placeholder="Masukkan Total"
-                                        required>
+                                    <input type="number" class="form-control" name="total" oninput="hitungTotal()"
+                                        readonly>
                                 </div>
                                 <hr>
                                 <div class="form-group">
@@ -174,4 +173,43 @@
 <script src="{{ asset('plugins/select2/custom-select2.js') }}"></script>
 <script src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
 <script src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
+<script>
+    function hitungTotal() {
+                                        // Get the values of each education level for both Laki-Laki and Perempuan
+                                        var lakiDoktor = parseInt(document.getElementsByName('laki_doktor')[0].value) || 0;
+                                        var perempuanDoktor = parseInt(document.getElementsByName('perempuan_doktor')[0].value) || 0;
+
+                                        var lakiMaster = parseInt(document.getElementsByName('laki_master')[0].value) || 0;
+                                        var perempuanMaster = parseInt(document.getElementsByName('perempuan_master')[0].value) || 0;
+
+                                        var lakiSarjana = parseInt(document.getElementsByName('laki_sarjana')[0].value) || 0;
+                                        var perempuanSarjana = parseInt(document.getElementsByName('perempuan_sarjana')[0].value) || 0;
+
+                                        var lakiSarjanaMuda = parseInt(document.getElementsByName('laki_sarjana_muda')[0].value) || 0;
+                                        var perempuanSarjanaMuda = parseInt(document.getElementsByName('perempuan_sarjana_muda')[0].value) || 0;
+
+                                        var lakislta = parseInt(document.getElementsByName('laki_slta')[0].value) || 0;
+                                        var perempuanslta = parseInt(document.getElementsByName('perempuan_slta')[0].value) || 0;
+
+                                        var lakiSltp = parseInt(document.getElementsByName('laki_sltp')[0].value) || 0;
+                                        var perempuanSltp = parseInt(document.getElementsByName('perempuan_sltp')[0].value) || 0;
+                                       
+                                        var lakiSd= parseInt(document.getElementsByName('laki_sd')[0].value) || 0;
+                                        var perempuanSd = parseInt(document.getElementsByName('perempuan_sd')[0].value) || 0;
+
+                                        // Calculate Laki Jumlah and Perempuan Jumlah
+                                        var lakiJumlah = lakiDoktor + lakiMaster + lakiSarjana + lakiSarjanaMuda + lakislta + lakiSltp + lakiSd ;
+                                        var perempuanJumlah = perempuanDoktor + perempuanMaster + perempuanSarjana + perempuanSarjanaMuda + perempuanslta + perempuanSltp + perempuanSd ;
+
+                                        // Update the "Laki Jumlah" and "Perempuan Jumlah" fields
+                                        document.getElementsByName('laki_jumlah')[0].value = lakiJumlah;
+                                        document.getElementsByName('perempuan_jumlah')[0].value = perempuanJumlah;
+
+                                        // Calculate the total
+                                        var total = lakiJumlah + perempuanJumlah;
+
+                                        // Update the "Total" field
+                                        document.getElementsByName('total')[0].value = total;
+                                    }
+</script>
 @endpush

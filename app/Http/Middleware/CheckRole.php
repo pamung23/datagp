@@ -15,30 +15,23 @@ class CheckRole
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, $level)
+    public function handle(Request $request, Closure $next, ...$levels)
     {
         $user = Auth::user();
 
         // Jika pengguna tidak login atau tidak memiliki level yang sesuai
-        if (!$user || !$this->hasLevel($user, $level)) {
+        if (!$user || !$this->hasLevel($user, $levels)) {
             // Simpan pesan error flash dan arahkan kembali ke dashboard
-            Session::flash('error', 'Anda tidak memiliki izin untuk mengakses halaman Tersebut.');
+            Session::flash('error', 'Anda tidak memiliki izin untuk mengakses halaman tersebut.');
             return redirect()->back();
         }
 
         return $next($request);
     }
 
-    /**
-     * Check if the user has a specific level.
-     *
-     * @param \App\Models\User $user
-     * @param string $level
-     * @return bool
-     */
-    private function hasLevel($user, $level)
+    private function hasLevel($user, $allowedLevels)
     {
-        // Jika level pengguna sesuai dengan yang diminta
-        return $user->level === $level;
+        // Jika setidaknya satu dari roles yang diizinkan sesuai dengan role pengguna
+        return count(array_intersect(explode(',', $user->level), $allowedLevels)) > 0;
     }
 }

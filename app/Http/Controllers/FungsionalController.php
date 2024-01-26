@@ -19,41 +19,84 @@ class FungsionalController extends Controller
     public function index(Request $request)
     {
         $semester = $request->input('semester', 1);
-        $year = $request->input('year'); // Get the selected year from the request
+        $year = $request->input('year');
+        $modelsToQuery = [];
 
-        $model = $this->modelMapping[$semester] ?? fungsional1::class;
+        // Ambil level pengguna saat ini
+        $userLevel = auth()->user()->level;
 
-        // Fetch data based on the selected year (if provided)
-        $query = $model::query();
+        // Inisialisasi array level yang diizinkan mengakses semua triwulan
+        $levelsAllowedForAllsemester = ['Admin', 'Balai'];
 
-        if ($year) {
-            $query->whereYear('created_at', $year);
+        if (in_array($userLevel, $levelsAllowedForAllsemester)) {
+            // Jika level pengguna adalah 'Admin' atau 'Balai', perbolehkan akses ke semua triwulan
+            foreach ($this->modelMapping as $model) {
+                $modelsToQuery[] = new $model;
+            }
+        } elseif (in_array($userLevel, ['Wilayah Cianjur', 'Wilayah Sukabumi', 'Wilayah Bogor'])) {
+            // Jika level pengguna adalah 'Wilayah Cianjur', 'Wilayah Sukabumi', atau 'Wilayah Bogor',
+            // batasi akses hanya ke triwulan yang dipilih dan resort yang sesuai
+            $model = $this->modelMapping[$semester] ?? fungsional1::class;
+            $modelsToQuery[] = new $model;
         }
 
-        $fungsional = $query->get();
+        $fungsional = collect();
 
-        // Fetch the unique years from the selected model
-        $uniqueYears = $model::selectRaw('YEAR(created_at) as year')
-            ->distinct()
-            ->orderBy('year', 'desc')
-            ->pluck('year');
+        foreach ($modelsToQuery as $model) {
+            $query = $model::query()->with('user.resort');
+
+            if ($year) {
+                $query->whereYear('created_at', $year);
+            }
+
+            // Jika level pengguna adalah 'Wilayah Cianjur', 'Wilayah Sukabumi', atau 'Wilayah Bogor',
+            // tambahkan kondisi untuk membatasi berdasarkan resort
+            if (in_array($userLevel, ['Wilayah Cianjur', 'Wilayah Sukabumi', 'Wilayah Bogor'])) {
+                $query->whereHas('user.resort', function ($subquery) use ($userLevel) {
+                    $subquery->where('nama', auth()->user()->resort->nama);
+                });
+            }
+
+            $fungsional = $fungsional->merge($query->get());
+        }
+
+        $uniqueYears = collect();
+
+        foreach ($modelsToQuery as $model) {
+            $years = $model::selectRaw('YEAR(created_at) as year')
+                ->distinct()
+                ->orderBy('year', 'desc')
+                ->pluck('year');
+
+            $uniqueYears = $uniqueYears->merge($years);
+        }
+
+        // Filter out duplicates and sort the unique years
+        $uniqueYears = $uniqueYears->unique()->sort()->reverse();
 
         return view('admin.fungsional.index', compact('fungsional', 'semester', 'uniqueYears', 'year'));
     }
 
     public function exportToExcel(Request $request)
     {
-        $semester = $request->query('semester', null);
-        $year = $request->query('year', null);
+        $semester = $request->get('semester');
+        $year = $request->get('year');
 
-        if ($year && $semester) {
-            return Excel::download(new FungsionalExport($semester, $year), 'fungsional_semester_' . $semester . '_tahun_' . $year . '.xlsx');
-        } elseif ($semester) {
-            return Excel::download(new FungsionalExport($semester, null), 'fungsional_semester_' . $semester . '.xlsx');
+        // Replace "/" and "\" with an underscore "_"
+        $replaceCharacter = '_';
+
+        if ($semester === 'all') {
+            $fileName = 'Sebaran Pejabat Fungsional Tertentu Menurut Fungsi dan Jenjang Jabatan ALL semester ' . $year . '.xlsx';
+        } elseif (in_array($semester, [1, 2])) {
+            $fileName = 'Sebaran Pejabat Fungsional Tertentu Menurut Fungsi dan Jenjang Jabatan semester ' . $semester . ' ' . $year . '.xlsx';
         } else {
-            // Redirect to a default page if neither year nor semester is selected
-            return redirect()->route('fungsionalsex.index'); // Replace with your desired default route
+            return redirect()->back()->with('error', 'Invalid Semester selected for export.');
         }
+
+        // Replace "/" and "\" with the specified character
+        $fileName = str_replace(['/', '\\'], $replaceCharacter, $fileName);
+
+        return (new FungsionalExport($semester, $year))->download($fileName);
     }
 
 
@@ -79,26 +122,53 @@ class FungsionalController extends Controller
         }
 
         $data = $request->validate([
-            'peh' => 'required|integer',
+            'calon_terampil_peh' => 'required|integer',
+            'terampil_peh' => 'required|integer',
+            'calon_ahli_peh' => 'required|integer',
+            'ahli_peh' => 'required|integer',
             'jumlah_peh' => 'required|integer',
-            'polhut' => 'required|integer',
+            'calon_terampil_polhut' => 'required|integer',
+            'terampil_polhut' => 'required|integer',
+            'calon_ahli_polhut' => 'required|integer',
+            'ahli_polhut' => 'required|integer',
             'jumlah_polhut' => 'required|integer',
-            'penyuluh' => 'required|integer',
+            'calon_terampil_penyuluh' => 'required|integer',
+            'terampil_penyuluh' => 'required|integer',
+            'calon_ahli_penyuluh' => 'required|integer',
+            'ahli_penyuluh' => 'required|integer',
             'jumlah_penyuluh' => 'required|integer',
-            'pranata' => 'required|integer',
+            'calon_terampil_pranata' => 'required|integer',
+            'terampil_pranata' => 'required|integer',
+            'calon_ahli_pranata' => 'required|integer',
+            'ahli_pranata' => 'required|integer',
             'jumlah_pranata' => 'required|integer',
-            'statis' => 'required|integer',
+            'calon_terampil_statis' => 'required|integer',
+            'terampil_statis' => 'required|integer',
+            'calon_ahli_statis' => 'required|integer',
+            'ahli_statis' => 'required|integer',
             'jumlah_statis' => 'required|integer',
-            'analisis' => 'required|integer',
+            'calon_terampil_analisis' => 'required|integer',
+            'terampil_analisis' => 'required|integer',
+            'calon_ahli_analisis' => 'required|integer',
+            'ahli_analisis' => 'required|integer',
             'jumlah_analisis' => 'required|integer',
-            'arsiparis' => 'required|integer',
+            'calon_terampil_arsiparis' => 'required|integer',
+            'terampil_arsiparis' => 'required|integer',
+            'calon_ahli_arsiparis' => 'required|integer',
+            'ahli_arsiparis' => 'required|integer',
             'jumlah_arsiparis' => 'required|integer',
-            'perencanana' => 'required|integer',
-            'jumlah_perencanana' => 'required|integer',
-            'pengadaan' => 'required|integer',
+            'calon_terampil_perencana' => 'required|integer',
+            'terampil_perencana' => 'required|integer',
+            'calon_ahli_perencana' => 'required|integer',
+            'ahli_perencana' => 'required|integer',
+            'jumlah_perencana' => 'required|integer',
+            'calon_terampil_pengadaan' => 'required|integer',
+            'terampil_pengadaan' => 'required|integer',
+            'calon_ahli_pengadaan' => 'required|integer',
+            'ahli_pengadaan' => 'required|integer',
             'jumlah_pengadaan' => 'required|integer',
-            'total' => 'nullable|integer',
-            'keterangan' => 'nullable',
+            'total' => 'required|integer',
+            'keterangan' => 'nullable|string',
         ]);
 
         // Simpan nilai semester bersama dengan data
@@ -137,26 +207,53 @@ class FungsionalController extends Controller
         }
 
         $data = $request->validate([
-            'peh' => 'required|integer',
+            'calon_terampil_peh' => 'required|integer',
+            'terampil_peh' => 'required|integer',
+            'calon_ahli_peh' => 'required|integer',
+            'ahli_peh' => 'required|integer',
             'jumlah_peh' => 'required|integer',
-            'polhut' => 'required|integer',
+            'calon_terampil_polhut' => 'required|integer',
+            'terampil_polhut' => 'required|integer',
+            'calon_ahli_polhut' => 'required|integer',
+            'ahli_polhut' => 'required|integer',
             'jumlah_polhut' => 'required|integer',
-            'penyuluh' => 'required|integer',
+            'calon_terampil_penyuluh' => 'required|integer',
+            'terampil_penyuluh' => 'required|integer',
+            'calon_ahli_penyuluh' => 'required|integer',
+            'ahli_penyuluh' => 'required|integer',
             'jumlah_penyuluh' => 'required|integer',
-            'pranata' => 'required|integer',
+            'calon_terampil_pranata' => 'required|integer',
+            'terampil_pranata' => 'required|integer',
+            'calon_ahli_pranata' => 'required|integer',
+            'ahli_pranata' => 'required|integer',
             'jumlah_pranata' => 'required|integer',
-            'statis' => 'required|integer',
+            'calon_terampil_statis' => 'required|integer',
+            'terampil_statis' => 'required|integer',
+            'calon_ahli_statis' => 'required|integer',
+            'ahli_statis' => 'required|integer',
             'jumlah_statis' => 'required|integer',
-            'analisis' => 'required|integer',
+            'calon_terampil_analisis' => 'required|integer',
+            'terampil_analisis' => 'required|integer',
+            'calon_ahli_analisis' => 'required|integer',
+            'ahli_analisis' => 'required|integer',
             'jumlah_analisis' => 'required|integer',
-            'arsiparis' => 'required|integer',
+            'calon_terampil_arsiparis' => 'required|integer',
+            'terampil_arsiparis' => 'required|integer',
+            'calon_ahli_arsiparis' => 'required|integer',
+            'ahli_arsiparis' => 'required|integer',
             'jumlah_arsiparis' => 'required|integer',
-            'perencanana' => 'required|integer',
-            'jumlah_perencanana' => 'required|integer',
-            'pengadaan' => 'required|integer',
+            'calon_terampil_perencana' => 'required|integer',
+            'terampil_perencana' => 'required|integer',
+            'calon_ahli_perencana' => 'required|integer',
+            'ahli_perencana' => 'required|integer',
+            'jumlah_perencana' => 'required|integer',
+            'calon_terampil_pengadaan' => 'required|integer',
+            'terampil_pengadaan' => 'required|integer',
+            'calon_ahli_pengadaan' => 'required|integer',
+            'ahli_pengadaan' => 'required|integer',
             'jumlah_pengadaan' => 'required|integer',
-            'total' => 'nullable|integer',
-            'keterangan' => 'nullable',
+            'total' => 'required|integer',
+            'keterangan' => 'nullable|string',
         ]);
 
         // Temukan data yang akan diperbarui berdasarkan ID
@@ -171,7 +268,7 @@ class FungsionalController extends Controller
 
     public function destroy($semester, $id)
     {
-        $model = $this->modelMapping[$semester] ?? fungsional_sex1::class;
+        $model = $this->modelMapping[$semester] ?? fungsional1::class;
 
         // Temukan data yang akan dihapus berdasarkan ID
         $dataToDelete = $model::findOrFail($id);

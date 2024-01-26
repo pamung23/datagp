@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 
 class ResortController extends Controller
 {
+    public function __construct()
+    {
+        // Middleware 'checkrole:Admin,Balai' akan dijalankan untuk semua metode kecuali 'show'
+        $this->middleware('checkrole:Admin,Balai')->except(['show']);
+    }
     /**
      * Display a listing of the resource.
      */

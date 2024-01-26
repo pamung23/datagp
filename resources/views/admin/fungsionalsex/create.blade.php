@@ -25,9 +25,10 @@
             <div class="statbox widget box box-shadow">
                 <div class="widget-header">
                     <div class="row">
-                        <div class="col-xl-12 col-md-12 col-sm-12 col-12">
+                        <div class="col-xl-12 col-md-12 col-sm-12 col-12" style="margin-left: 12px;">
+                            <br>
                             <h3>Semester {{ $semester }}</h3>
-                            <h4>Tambah Data Sebaran PNS/CPNS Menurut Tingkat Pendidikan dan Jenis Kelamin</h4>
+                            <h4>Tambah Data Sebaran Pejabat Fungsional Tertentu Menurut Fungsi dan Jenis Kelamin</h4>
                         </div>
                     </div>
                 </div>
@@ -47,132 +48,129 @@
                             <form action="{{ route('fungsionalsex.store', ['semester' => $semester]) }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="semester" value="{{ $semester }}">
-
                                 <h6>PEH</h6>
                                 <div class="form-group">
-                                    <label for="laki_peh">Laki PEH</label>
-                                    <input type="number" class="form-control" name="laki_peh"
-                                        placeholder="Masukkan Laki PEH" required>
+                                    <label for="laki_peh">Laki-laki</label>
+                                    <input type="number" class="form-control" name="laki_peh" placeholder=""
+                                        oninput="hitungTotal()" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="perempuan_peh">Perempuan PEH</label>
-                                    <input type="number" class="form-control" name="perempuan_peh"
-                                        placeholder="Masukkan Perempuan PEH" required>
+                                    <label for="perempuan_peh">Perempuan</label>
+                                    <input type="number" class="form-control" name="perempuan_peh" placeholder=""
+                                        oninput="hitungTotal()" required>
                                 </div>
                                 <div class="thick-hr"></div>
                                 <h6>Polhut</h6>
                                 <div class="form-group">
-                                    <label for="laki_polhut">Laki Polhut</label>
-                                    <input type="number" class="form-control" name="laki_polhut"
-                                        placeholder="Masukkan Laki Polhut" required>
+                                    <label for="laki_polhut">Laki-laki</label>
+                                    <input type="number" class="form-control" name="laki_polhut" placeholder=""
+                                        oninput="hitungTotal()" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="perempuan_polhut">Perempuan Polhut</label>
+                                    <label for="perempuan_polhut">Perempuan</label>
                                     <input type="number" class="form-control" name="perempuan_polhut"
-                                        placeholder="Masukkan Perempuan Polhut" required>
+                                        oninput="hitungTotal()" required>
                                 </div>
                                 <div class="thick-hr"></div>
                                 <h6>Penyuluh</h6>
                                 <div class="form-group">
-                                    <label for="laki_penyuluh">Laki Penyuluh</label>
+                                    <label for="laki_penyuluh">Laki-laki</label>
                                     <input type="number" class="form-control" name="laki_penyuluh"
-                                        placeholder="Masukkan Laki Penyuluh" required>
+                                        oninput="hitungTotal()" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="perempuan_penyuluh">Perempuan Penyuluh</label>
+                                    <label for="perempuan_penyuluh">Perempuan</label>
                                     <input type="number" class="form-control" name="perempuan_penyuluh"
-                                        placeholder="Masukkan Perempuan Penyuluh" required>
+                                        oninput="hitungTotal()" required>
                                 </div>
                                 <div class="thick-hr"></div>
                                 <h6>Pranata Komputer</h6>
                                 <div class="form-group">
-                                    <label for="laki_pranata">Laki Pranata Komputer</label>
+                                    <label for="laki_pranata">Laki-laki</label>
                                     <input type="number" class="form-control" name="laki_pranata"
-                                        placeholder="Masukkan Laki Pranata Komputer" required>
+                                        oninput="hitungTotal()" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="perempuan_pranata">Perempuan Pranata Komputer</label>
+                                    <label for="perempuan_pranata">Perempuan</label>
                                     <input type="number" class="form-control" name="perempuan_pranata"
-                                        placeholder="Masukkan Perempuan Pranata Komputer" required>
+                                        oninput="hitungTotal()" required>
                                 </div>
                                 <div class="thick-hr"></div>
                                 <h6>Statistisi</h6>
                                 <div class="form-group">
-                                    <label for="laki_statistisi">Laki Statistisi</label>
+                                    <label for="laki_statistisi">Laki-laki</label>
                                     <input type="number" class="form-control" name="laki_statistisi"
-                                        placeholder="Masukkan Laki Statistisi" required>
+                                        oninput="hitungTotal()" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="perempuan_statistisi">Perempuan Statistisi</label>
+                                    <label for="perempuan_statistisi">Perempuan</label>
                                     <input type="number" class="form-control" name="perempuan_statistisi"
-                                        placeholder="Masukkan Perempuan Statistisi" required>
+                                        oninput="hitungTotal()" required>
                                 </div>
                                 <div class="thick-hr"></div>
                                 <h6>Analis Kepegawaian</h6>
                                 <div class="form-group">
-                                    <label for="laki_analis">Laki Analis Kepegawaian</label>
-                                    <input type="number" class="form-control" name="laki_analis"
-                                        placeholder="Masukkan Laki Analis Kepegawaian" required>
+                                    <label for="laki_analis">Laki-laki</label>
+                                    <input type="number" class="form-control" name="laki_analis" oninput="hitungTotal()"
+                                        required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="perempuan_analis">Perempuan Analis Kepegawaian</label>
+                                    <label for="perempuan_analis">Perempuan</label>
                                     <input type="number" class="form-control" name="perempuan_analis"
-                                        placeholder="Masukkan Perempuan Analis Kepegawaian" required>
+                                        oninput="hitungTotal()" required>
                                 </div>
                                 <div class="thick-hr"></div>
                                 <h6>Arsiparis</h6>
                                 <div class="form-group">
-                                    <label for="laki_arsiparis">Laki Arsiparis</label>
+                                    <label for="laki_arsiparis">Laki-laki</label>
                                     <input type="number" class="form-control" name="laki_arsiparis"
-                                        placeholder="Masukkan Laki Arsiparis" required>
+                                        oninput="hitungTotal()" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="perempuan_arsiparis">Perempuan Arsiparis</label>
+                                    <label for="perempuan_arsiparis">Perempuan</label>
                                     <input type="number" class="form-control" name="perempuan_arsiparis"
-                                        placeholder="Masukkan Perempuan Arsiparis" required>
+                                        oninput="hitungTotal()" required>
                                 </div>
                                 <div class="thick-hr"></div>
                                 <h6>Perencana</h6>
                                 <div class="form-group">
-                                    <label for="laki_perencana">Laki Perencana</label>
+                                    <label for="laki_perencana">Laki-laki</label>
                                     <input type="number" class="form-control" name="laki_perencana"
-                                        placeholder="Masukkan Laki Perencana" required>
+                                        oninput="hitungTotal()" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="perempuan_perencana">Perempuan Perencana</label>
+                                    <label for="perempuan_perencana">Perempuan</label>
                                     <input type="number" class="form-control" name="perempuan_perencana"
-                                        placeholder="Masukkan Perempuan Perencana" required>
+                                        oninput="hitungTotal()" required>
                                 </div>
                                 <div class="thick-hr"></div>
                                 <h6>Pengadaan Barjas</h6>
                                 <div class="form-group">
-                                    <label for="laki_pengadaan">Laki Pengadaan Barjas</label>
+                                    <label for="laki_pengadaan">Laki-laki</label>
                                     <input type="number" class="form-control" name="laki_pengadaan"
-                                        placeholder="Masukkan Laki Pengadaan Barjas" required>
+                                        oninput="hitungTotal()" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="perempuan_pengadaan">Perempuan Pengadaan Barjas</label>
+                                    <label for="perempuan_pengadaan">Perempuan</label>
                                     <input type="number" class="form-control" name="perempuan_pengadaan"
-                                        placeholder="Masukkan Perempuan Pengadaan Barjas" required>
+                                        oninput="hitungTotal()" required>
                                 </div>
                                 <div class="thick-hr"></div>
                                 <h6>Jumlah</h6>
                                 <div class="form-group">
-                                    <label for="laki_jumlah">Laki Jumlah</label>
-                                    <input type="number" class="form-control" name="laki_jumlah"
-                                        placeholder="Masukkan Laki Jumlah" required>
+                                    <label for="laki_jumlah">Jumlah Laki-laki</label>
+                                    <input type="number" class="form-control" name="laki_jumlah" oninput="hitungTotal()"
+                                        readonly>
                                 </div>
                                 <div class="form-group">
-                                    <label for="perempuan_jumlah">Perempuan Jumlah</label>
+                                    <label for="perempuan_jumlah">Jumlah Perempuan</label>
                                     <input type="number" class="form-control" name="perempuan_jumlah"
-                                        placeholder="Masukkan Perempuan Jumlah" required>
+                                        oninput="hitungTotal()" readonly>
                                 </div>
-                                <div class="thick-hr"></div>
-                                <h6>Total</h6>
                                 <div class="form-group">
                                     <label for="total">Total</label>
-                                    <input type="number" class="form-control" name="total" placeholder="Masukkan Total"
-                                        required>
+                                    <input type="number" class="form-control" name="total" oninput="hitungTotal()"
+                                        readonly>
                                 </div>
                                 <hr>
                                 <div class="form-group">
@@ -197,4 +195,43 @@
 <script src="{{ asset('plugins/select2/custom-select2.js') }}"></script>
 <script src="{{ asset('plugins/flatpickr/flatpickr.js') }}"></script>
 <script src="{{ asset('plugins/flatpickr/custom-flatpickr.js') }}"></script>
+<script>
+    function hitungTotal() {
+        var lakipeh = parseInt(document.getElementsByName('laki_peh')[0].value) || 0;
+        var perempuanpeh = parseInt(document.getElementsByName('perempuan_peh')[0].value) || 0;
+        
+        var lakipolhut = parseInt(document.getElementsByName('laki_polhut')[0].value) || 0;
+        var perempuanpolhut = parseInt(document.getElementsByName('perempuan_polhut')[0].value) || 0;
+
+        var lakipenyuluh = parseInt(document.getElementsByName('laki_penyuluh')[0].value) || 0;
+        var perempuanpenyuluh = parseInt(document.getElementsByName('perempuan_penyuluh')[0].value) || 0;
+
+        var lakipranata = parseInt(document.getElementsByName('laki_pranata')[0].value) || 0;
+        var perempuanpranata = parseInt(document.getElementsByName('perempuan_pranata')[0].value) || 0;
+
+        var lakistatistisi = parseInt(document.getElementsByName('laki_statistisi')[0].value) || 0;
+        var perempuanstatistisi = parseInt(document.getElementsByName('perempuan_statistisi')[0].value) || 0;
+
+        var lakianalis = parseInt(document.getElementsByName('laki_analis')[0].value) || 0;
+        var perempuananalis = parseInt(document.getElementsByName('perempuan_analis')[0].value) || 0;
+
+        var lakiarsiparis = parseInt(document.getElementsByName('laki_arsiparis')[0].value) || 0;
+        var perempuanarsiparis = parseInt(document.getElementsByName('perempuan_arsiparis')[0].value) || 0;
+
+        var lakiperencana = parseInt(document.getElementsByName('laki_perencana')[0].value) || 0;
+        var perempuanperencana = parseInt(document.getElementsByName('perempuan_perencana')[0].value) || 0;
+
+        var lakipengadaan = parseInt(document.getElementsByName('laki_pengadaan')[0].value) || 0;
+        var perempuanpengadaan = parseInt(document.getElementsByName('perempuan_pengadaan')[0].value) || 0;
+
+        var laki_jumlah = lakipeh + lakipolhut + lakipenyuluh + lakipranata + lakistatistisi + lakianalis + lakiarsiparis + lakiperencana + lakipengadaan;
+        document.getElementsByName('laki_jumlah')[0].value = laki_jumlah;
+
+        var perempuan_jumlah = perempuanpeh + perempuanpolhut + perempuanpenyuluh + perempuanpranata + perempuanstatistisi + perempuananalis + perempuanarsiparis + perempuanperencana + perempuanpengadaan;
+        document.getElementsByName('perempuan_jumlah')[0].value = perempuan_jumlah;
+
+        var total = laki_jumlah + perempuan_jumlah;
+        document.getElementsByName('total')[0].value = total;
+    }
+</script>
 @endpush

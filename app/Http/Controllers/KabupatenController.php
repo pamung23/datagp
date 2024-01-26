@@ -10,6 +10,12 @@ class KabupatenController extends Controller
     /**
      * Display a listing of the resource.
      */
+    public function __construct()
+    {
+        // Apply 'checkrole:Admin,Balai' middleware only for specific methods
+        $this->middleware('checkrole:Admin,Balai')->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+    }
+
     public function index()
     {
         $kabupaten = Kabupaten::all();

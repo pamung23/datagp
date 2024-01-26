@@ -17,7 +17,7 @@
             </li>
 
             <li class="menu">
-                @if(Auth::check() && Auth::user()->level == 'Admin')
+                @if(Auth::check() && (Auth::user()->level == 'Admin' || Auth::user()->level == 'Balai'))
                 <a href="#datatables" data-active="false" data-toggle="collapse" aria-expanded="false"
                     class="dropdown-toggle">
                     <div>
@@ -43,7 +43,7 @@
                         <a href="{{ route('kabupaten.index') }}">Kabupaten</a>
                     </li>
                     <li>
-                        <a href="{{ route('kecamatan.index') }}">kecamatan</a>
+                        <a href="{{ route('kecamatan.index') }}">Kecamatan</a>
                     </li>
                     <li>
                         <a href="{{ route('desa.index') }}">Desa</a>

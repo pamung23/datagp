@@ -93,6 +93,43 @@ Route::get('/forgotpassword', function () {
     return view('auth.forgotpassword');
 })->middleware('auth')->name('password.request');
 Route::middleware(['auth'])->group(function () {
+    Route::resource('kabupaten', KabupatenController::class);
+    Route::resource('kecamatan', KecamatanController::class);
+    Route::resource('desa', DesaController::class);
+    Route::resource('resort', ResortController::class);
+    // Admin-specific routes
+    // Route::middleware(['checkrole:Admin, Balai'])->group(function () {
+    //     Route::resource('kabupaten', KabupatenController::class);
+    //     Route::resource('kecamatan', KecamatanController::class);
+    //     Route::resource('desa', DesaController::class);
+    //     Route::resource('resort', ResortController::class);
+    // });
+    Route::middleware(['checkrole:Admin'])->group(function () {
+        Route::resource('user', UserController::class);
+    });
+
+    // Balai-specific routes (if any)
+    Route::middleware(['checkrole:Balai'])->group(function () {
+        // Add Balai-specific routes here if needed
+    });
+
+    // Rute untuk Wilayah Cianjur
+    Route::middleware(['checkrole:Wilayah Cianjur'])->group(function () {
+        // Tambahkan rute-rute wilayah Cianjur sesuai kebutuhan
+
+    });
+
+    // Rute untuk Wilayah Sukabumi
+    Route::middleware(['checkrole:Wilayah Sukabumi'])->group(function () {
+        // Tambahkan rute-rute wilayah Sukabumi sesuai kebutuhan
+
+    });
+
+    // Rute untuk Wilayah Bogor
+    Route::middleware(['checkrole:Wilayah Bogor'])->group(function () {
+        // Tambahkan rute-rute wilayah Bogor sesuai kebutuhan
+
+    });
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/profil', [AuthController::class, 'profil'])->name('profil');
     // Start Tahun
@@ -568,43 +605,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/kerjasamateknis/{semester}/{id}/edit', [KerjasamaTeknisController::class, 'edit'])->name('kerjasamateknis.edit');
     Route::put('/kerjasamateknis/{semester}/{id}/update', [KerjasamaTeknisController::class, 'update'])->name('kerjasamateknis.update');
     Route::delete('/kerjasamateknis/{semester}/{id}/destroy', [KerjasamaTeknisController::class, 'destroy'])->name('kerjasamateknis.destroy');
-
-    // Rute untuk Admin
-    Route::middleware(['checkrole:Admin'])->group(function () {
-        //masterdata
-        Route::resource('user', UserController::class);
-        Route::resource('kabupaten', KabupatenController::class);
-        Route::resource('kecamatan', KecamatanController::class);
-        Route::resource('desa', DesaController::class);
-        Route::resource('resort', ResortController::class);
-        //master data
-
-        Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-    });
-
-    // Rute untuk Balai
-    Route::middleware(['checkrole:Balai'])->group(function () {
-
-        Route::get('/balai/settings', [BalaiController::class, 'settings'])->name('balai.settings');
-    });
-
-    // Rute untuk Wilayah Cianjur
-    Route::middleware(['checkrole:Wilayah Cianjur'])->group(function () {
-        // Tambahkan rute-rute wilayah Cianjur sesuai kebutuhan
-        Route::get('/wilayah-cianjur/settings', [WilayahCianjurController::class, 'settings'])->name('wilayah-cianjur.settings');
-    });
-
-    // Rute untuk Wilayah Sukabumi
-    Route::middleware(['checkrole:Wilayah Sukabumi'])->group(function () {
-        // Tambahkan rute-rute wilayah Sukabumi sesuai kebutuhan
-        Route::get('/wilayah-sukabumi/settings', [WilayahSukabumiController::class, 'settings'])->name('wilayah-sukabumi.settings');
-    });
-
-    // Rute untuk Wilayah Bogor
-    Route::middleware(['checkrole:Wilayah Bogor'])->group(function () {
-        // Tambahkan rute-rute wilayah Bogor sesuai kebutuhan
-        Route::get('/wilayah-bogor/settings', [WilayahBogorController::class, 'settings'])->name('wilayah-bogor.settings');
-    });
 });
 Route::prefix('')->group(function () {
 

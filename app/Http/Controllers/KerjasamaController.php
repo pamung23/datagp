@@ -126,17 +126,18 @@ class KerjasamaController extends Controller
 
     public function exportToExcel(Request $request)
     {
-        $semester = $request->query('semester', null);
-        $year = $request->query('year', null);
+        $semester = $request->get('semester');
+        $year = $request->get('year');
 
-        if ($year && $semester) {
-            return Excel::download(new KerjasamaExport($semester, $year), 'kerjasama_semester_' . $semester . '_tahun_' . $year . '.xlsx');
-        } elseif ($semester) {
-            return Excel::download(new KerjasamaExport($semester, null), 'kerjasama_semester_' . $semester . '.xlsx');
+        if ($semester === 'all') {
+            $fileName = 'kerjasama Kawasan Konservasi ALL semester ' . $year . '.xlsx';
+        } elseif (in_array($semester, [1, 2])) {
+            $fileName = 'kerjasama Kawasan Konservasi semester ' . $semester . ' ' . $year . '.xlsx';
         } else {
-            // Redirect to a default page if neither year nor semester is selected
-            return redirect()->route('kerjasama.index'); // Replace with your desired default route
+            return redirect()->back()->with('error', 'Invalid Semester selected for export.');
         }
+
+        return (new KerjasamaExport($semester, $year))->download($fileName);
     }
 
 

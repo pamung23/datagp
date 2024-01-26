@@ -8,6 +8,11 @@ use Illuminate\Http\Request;
 
 class KecamatanController extends Controller
 {
+    public function __construct()
+    {
+        // Middleware 'checkrole:Admin,Balai' akan dijalankan untuk semua metode kecuali 'show'
+        $this->middleware('checkrole:Admin,Balai')->except(['show']);
+    }
     public function index()
     {
         $kecamatan = Kecamatan::all();

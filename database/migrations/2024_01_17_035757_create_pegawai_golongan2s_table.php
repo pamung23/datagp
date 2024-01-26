@@ -25,7 +25,9 @@ return new class extends Migration
             $table->integer('laki_jumlah');
             $table->integer('perempuan_jumlah');
             $table->integer('total');
-            $table->string('keterangan')->nullable();
+            $table->text('keterangan')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
             $table->timestamps();
         });
     }
